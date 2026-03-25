@@ -154,7 +154,59 @@ result.innerText=text;
 // ===== PDF
 function printPDF(){
 let w=window.open("");
-w.document.write("<pre>"+result.innerText+"</pre>");
+function printPDF(){
+
+let w=window.open("");
+
+let html = `
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+body{font-family:sans-serif;padding:20px;}
+.title{font-size:22px;font-weight:bold;margin-bottom:10px;}
+.box{border:1px solid #000;padding:10px;margin-bottom:10px;}
+.total{font-size:20px;font-weight:bold;color:red;}
+</style>
+</head>
+
+<body>
+
+<div class="title">見積書</div>
+
+<div class="box">
+屋号：万事屋そうちゃん<br>
+</div>
+
+<div class="box">
+顧客名：${valText("name")}<br>
+電話：${valText("phone")}<br>
+住所：${valText("address")}<br>
+希望日：${valText("date1")} / ${valText("date2")} / ${valText("date3")}
+</div>
+
+<div class="box">
+距離：${val("distance")} km<br>
+立米：${document.getElementById("result").innerText.match(/立米：(.*)m/)?RegExp.$1:""} ㎥
+</div>
+
+<div class="box total">
+合計：${getPrice().toLocaleString()} 円（税込）
+</div>
+
+<div style="margin-top:20px;">
+※即決割引あり<br>
+※高速代別途
+</div>
+
+</body>
+</html>
+`;
+
+w.document.write(html);
+w.document.close();
+w.print();
+}
 }
 
 // ===== 保存（電話上書き）
@@ -163,10 +215,11 @@ function saveData(){
 let phone=valText("phone");
 if(!phone){alert("電話必須");return;}
 
-let un=JSON.parse(localStorage.getItem("un")||"[]");
-un=un.filter(x=>x.phone!==phone);
+let con=JSON.parse(localStorage.getItem("con")||"[]");
 
-un.unshift({
+con=con.filter(x=>x.phone!==phone);
+
+con.unshift({
 id:Date.now(),
 phone,
 name:valText("name"),
@@ -174,8 +227,9 @@ price:getPrice(),
 text:result.innerText
 });
 
-localStorage.setItem("un",JSON.stringify(un));
-render();
+localStorage.setItem("con", JSON.stringify(con));
+renderCon();
+renderDone();
 }
 
 function getPrice(){
@@ -198,22 +252,8 @@ function del(type,id){
 let arr=JSON.parse(localStorage.getItem(type)||"[]");
 arr=arr.filter(x=>x.id!=id);
 localStorage.setItem(type,JSON.stringify(arr));
-render();renderCon();renderDone();
-}
-
-// ===== 未申込
-function render(){
-let un=JSON.parse(localStorage.getItem("un")||"[]");
-let html="<h2>未申込</h2>";
-un.forEach(x=>{
-html+=`<div class="card">
-${x.phone} ${x.price}円
-<button onclick="view(${x.id})">見積書</button>
-<button onclick="toCon(${x.id})">申込</button>
-<button onclick="del('un',${x.id})">削除</button>
-</div>`;
-});
-unList.innerHTML=html;
+renderCon();
+renderDone();
 }
 
 // ===== 申込
@@ -249,17 +289,6 @@ totalSales.innerText="売上合計："+total.toLocaleString()+"円";
 }
 
 // ===== 移動
-function toCon(id){
-let un=JSON.parse(localStorage.getItem("un")||"[]");
-let con=JSON.parse(localStorage.getItem("con")||"[]");
-let item=un.find(x=>x.id==id);
-un=un.filter(x=>x.id!=id);
-con.unshift(item);
-localStorage.setItem("un",JSON.stringify(un));
-localStorage.setItem("con",JSON.stringify(con));
-render();renderCon();
-}
-
 function toDone(id){
 let con=JSON.parse(localStorage.getItem("con")||"[]");
 let done=JSON.parse(localStorage.getItem("done")||"[]");
