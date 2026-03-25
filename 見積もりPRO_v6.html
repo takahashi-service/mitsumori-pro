@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>見積もりPRO 完全版v6</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{font-family:sans-serif;background:#eef2f5;padding:15px;}
+.card{background:#fff;padding:15px;margin-bottom:15px;border-radius:10px;}
+input,select{width:100%;margin:5px 0;padding:8px;}
+button{padding:12px;margin-top:8px;width:100%;border:none;border-radius:8px;}
+.calc{background:#007bff;color:#fff;}
+.save{background:#ffc107;}
+.pdf{background:#28a745;color:#fff;}
+.discount{background:#dc3545;color:#fff;}
+.result{white-space:pre-line;background:#111;color:#0f0;padding:10px;border-radius:10px;}
+</style>
+</head>
+
+<body>
+
+<h1>🚚 見積もりPRO v6</h1>
+
+<div class="card">
+<h2>顧客情報</h2>
+<input id="name" placeholder="名前">
+<input id="phone" placeholder="電話番号">
+<input id="address" placeholder="住所">
+
+<h2>希望日</h2>
+<input type="date" id="date1">
+<input type="date" id="date2">
+<input type="date" id="date3">
+</div>
+
+<div class="card">
+<h2>条件</h2>
+<input id="distance" type="number" placeholder="距離km">
+<input id="highway" type="number" placeholder="高速代">
+
+<select id="planType">
+<option value="normal">通常プラン</option>
+<option value="small">小口限定プラン（25,000円）</option>
+<option value="smallPlus">小口拡張プラン（+10,000円）</option>
+</select>
+</div>
+
+<div class="card">
+<h2>家財リスト（立米計算）</h2>
+<input id="box" type="number" placeholder="ダンボール">
+<input id="fridgeSmall" type="number" placeholder="冷蔵庫 小">
+<input id="fridgeMedium" type="number" placeholder="冷蔵庫 中">
+<input id="fridgeLarge" type="number" placeholder="冷蔵庫 大">
+<input id="washerNormal" type="number" placeholder="洗濯機">
+<input id="washerDrum" type="number" placeholder="ドラム式">
+<input id="tvSmall" type="number" placeholder="テレビ 小">
+<input id="tvMedium" type="number" placeholder="テレビ 中">
+<input id="tvLarge" type="number" placeholder="テレビ 大">
+<input id="cupboardSmall" type="number" placeholder="食器棚 小">
+<input id="cupboardMedium" type="number" placeholder="食器棚 中">
+<input id="cupboardLarge" type="number" placeholder="食器棚 大">
+<input id="bedSingle" type="number" placeholder="ベッド シングル">
+<input id="bedSemi" type="number" placeholder="ベッド セミダブル">
+<input id="bedDouble" type="number" placeholder="ベッド ダブル">
+<input id="bedQueen" type="number" placeholder="ベッド クイーン">
+<input id="bedKing" type="number" placeholder="ベッド キング">
+<input id="sofa" type="number" placeholder="ソファ">
+<input id="bikeSmall" type="number" placeholder="自転車 小">
+<input id="bikeLarge" type="number" placeholder="自転車 大">
+</div>
+
+<button class="discount" onclick="toggleDiscount()">即決割引 -5000円</button>
+<button class="calc" onclick="calc()">計算</button>
+<button class="save" onclick="saveData()">保存</button>
+<button class="pdf" onclick="printPDF()">PDF</button>
+
+<div id="result" class="result"></div>
+<div id="printArea"></div>
+
+<hr>
+<div id="unList"></div>
+<div id="conList"></div>
+<div id="doneList"></div>
+<div id="totalSales"></div>
+
+<script>
+
+let isDiscount=false;
+
+function toggleDiscount(){isDiscount=!isDiscount;calc();}
+function val(id){return Number(document.getElementById(id).value)||0;}
+function valText(id){return document.getElementById(id).value||"";}
+
+function calc(){
+
+let name=valText("name");
+let phone=valText("phone");
+let address=valText("address");
+
+let distance=val("distance");
+let highway=val("highway");
+let planType=document.getElementById("planType").value;
+
+// ===== 立米 =====
+let volume =
+val("box")*0.1 +
+val("fridgeSmall")*0.3 + val("fridgeMedium")*0.5 + val("fridgeLarge")*0.8 +
+val("washerNormal")*0.3 + val("washerDrum")*0.6 +
+val("tvSmall")*0.2 + val("tvMedium")*0.3 + val("tvLarge")*0.5 +
+val("cupboardSmall")*0.5 + val("cupboardMedium")*0.8 + val("cupboardLarge")*1.2 +
+val("bedSingle")*1.0 + val("bedSemi")*1.2 + val("bedDouble")*1.4 + val("bedQueen")*1.6 + val("bedKing")*1.8 +
+val("sofa")*1.5 +
+val("bikeSmall")*0.5 + val("bikeLarge")*0.8;
+
+// ===== 金額 =====
+let price;
+
+if(planType==="small"){
+price=25000;
+}else{
+price=30000+(distance*200)+(volume*2000)+highway;
+
+if(planType==="smallPlus"){
+price+=10000;
+}
+}
+
+price=Math.floor(price/1000)*1000;
+if(isDiscount) price-=5000;
+
+let today=new Date().toLocaleDateString();
+
+// ===== 説明文 =====
+let description =
+"\n【料金説明】\n"+
+"・基本料金：30,000円\n"+
+"・距離："+distance+"km\n"+
+"・荷物量："+volume.toFixed(2)+"㎥\n"+
+"・高速代："+highway+"円\n"+
+"・プラン："+planType+"\n"+
+"※即決で割引あり\n";
+
+// ===== 見積 =====
+let text=
+"【見積書】\n\n"+
+"顧客："+name+"\n"+
+"電話："+phone+"\n"+
+"住所："+address+"\n\n"+
+"金額："+price.toLocaleString()+"円\n"+
+description+
+"\n見積日："+today;
+
+result.innerText=text;
+}
+
+// ===== 保存
+function saveData(){
+let phone=valText("phone");
+if(!phone){alert("電話番号必須");return;}
+
+let un=JSON.parse(localStorage.getItem("un")||"[]");
+un=un.filter(x=>x.phone!==phone);
+
+un.unshift({
+id:Date.now(),
+phone,
+name:valText("name"),
+price:getPrice(),
+text:result.innerText
+});
+
+localStorage.setItem("un",JSON.stringify(un));
+render();
+}
+
+function getPrice(){
+let m=result.innerText.match(/金額：(.*)円/);
+return m?Number(m[1].replace(/,/g,"")):0;
+}
+
+// ===== 未申込
+function render(){
+let un=JSON.parse(localStorage.getItem("un")||"[]");
+let html="<h2>未申込</h2>";
+
+un.forEach(x=>{
+html+=`
+<div class="card">
+${x.phone}｜${x.name} ${x.price}円
+<button onclick="toCon(${x.id})">申込</button>
+</div>`;
+});
+unList.innerHTML=html;
+}
+
+// ===== 申込
+function renderCon(){
+let con=JSON.parse(localStorage.getItem("con")||"[]");
+let html="<h2>申込</h2>";
+
+con.forEach(x=>{
+html+=`
+<div class="card">
+${x.phone} ${x.price}円
+<button onclick="toDone(${x.id})">確認→成約</button>
+</div>`;
+});
+conList.innerHTML=html;
+}
+
+// ===== 成約
+function renderDone(){
+let done=JSON.parse(localStorage.getItem("done")||"[]");
+let total=0;
+let html="<h2>成約済</h2>";
+
+done.forEach(x=>{
+total+=x.price;
+html+=`
+<div class="card">
+${x.phone} ${x.price}円
+</div>`;
+});
+
+doneList.innerHTML=html;
+totalSales.innerText="売上合計："+total.toLocaleString()+"円";
+}
+
+// ===== 移動
+function toCon(id){
+let un=JSON.parse(localStorage.getItem("un")||"[]");
+let con=JSON.parse(localStorage.getItem("con")||"[]");
+
+let item=un.find(x=>x.id==id);
+un=un.filter(x=>x.id!=id);
+con.unshift(item);
+
+localStorage.setItem("un",JSON.stringify(un));
+localStorage.setItem("con",JSON.stringify(con));
+
+render();renderCon();
+}
+
+function toDone(id){
+let con=JSON.parse(localStorage.getItem("con")||"[]");
+let done=JSON.parse(localStorage.getItem("done")||"[]");
+
+let item=con.find(x=>x.id==id);
+con=con.filter(x=>x.id!=id);
+done.unshift(item);
+
+localStorage.setItem("con",JSON.stringify(con));
+localStorage.setItem("done",JSON.stringify(done));
+
+renderCon();renderDone();
+}
+
+render();
+renderCon();
+renderDone();
+
+</script>
+
+</body>
+</html>
