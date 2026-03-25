@@ -117,8 +117,8 @@ val("bikeSmall")*0.5 + val("bikeLarge")*0.8;
 let plan="通常";
 let price=30000+(distance*200)+(volume*2000)+highway;
 
-if(volume<=1){plan="小口限定"; price=25000;}
-else if(volume<=3){plan="小口拡張"; price+=10000;}
+if(volume<=3){plan="小口限定"; price=25000;}
+else if(volume<=4.5){plan="小口拡張"; price+=10000;}
 
 let override=document.getElementById("planOverride").value;
 if(override==="small"){plan="小口限定"; price=25000;}
