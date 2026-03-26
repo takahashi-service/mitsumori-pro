@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>見積もりPRO V13（完全版）</title>
+
+<style>
+body{
+  font-family:sans-serif;
+  background:#f5f5f5;
+  padding:20px;
+}
+.card{
+  background:#fff;
+  padding:15px;
+  margin-bottom:15px;
+  border-radius:10px;
+  box-shadow:0 0 5px rgba(0,0,0,0.1);
+}
+input,select,button,textarea{
+  font-size:16px;
+  margin:5px 0;
+  width:100%;
+  padding:8px;
+}
+button{
+  background:#007bff;
+  color:#fff;
+  border:none;
+  border-radius:5px;
+}
+h2,h3{
+  margin-bottom:10px;
+}
+.small{
+  font-size:12px;
+  color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<h2>見積もりPRO V13（完全版）</h2>
+
+<!-- 顧客情報 -->
+<div class="card">
+<h3>顧客情報</h3>
+
+<input id="name" placeholder="名前">
+<input id="tel" placeholder="電話番号">
+
+<label>積み地</label>
+<input id="from" placeholder="例：東京都渋谷区">
+<button onclick="copyText('from')">積み地コピー</button>
+
+<label>降ろし地</label>
+<input id="to" placeholder="例：神奈川県横浜市">
+<button onclick="copyText('to')">降ろし地コピー</button>
+
+<label>希望日</label>
+<input id="date1" placeholder="第1希望">
+<input id="date2" placeholder="第2希望">
+<input id="date3" placeholder="第3希望">
+
+</div>
+
+<!-- 基本条件 -->
+<div class="card">
+<h3>基本条件</h3>
+
+<label>距離（km）</label>
+<input id="distance" type="number" placeholder="例：25">
+
+<label>階段</label>
+<select id="stairs">
+<option value="0">なし</option>
+<option value="3000">あり（+3,000円）</option>
+</select>
+
+<label>繁忙期</label>
+<select id="busy">
+<option value="0">通常</option>
+<option value="20000">繁忙期（+20,000円）</option>
+</select>
+
+</div>
+
+<!-- 立米表示 -->
+<div class="card">
+<h3>立米</h3>
+
+<input id="m3" type="number" readonly>
+<p>合計立米：<span id="totalM3">0</span> ㎥</p>
+
+</div>
+
+<!-- 家財選択（完全フル版） -->
+<div class="card">
+<h3>家財選択（完全版）</h3>
+
+<select id="item_full">
+<option value="0">選択してください</option>
+
+<!-- 大型家具 -->
+<option value="0.3">冷蔵庫</option>
+<option value="0.3">洗濯機</option>
+<option value="0.6">ダブルベッド</option>
+<option value="0.5">シングルベッド</option>
+<option value="0.5">ソファ（2人）</option>
+<option value="0.7">ソファ（3人）</option>
+<option value="0.4">タンス大</option>
+<option value="0.3">タンス小</option>
+<option value="0.35">食器棚</option>
+<option value="0.4">本棚</option>
+
+<!-- 中型家具 -->
+<option value="0.2">テレビ</option>
+<option value="0.2">テレビ台</option>
+<option value="0.15">デスク</option>
+<option value="0.1">椅子</option>
+<option value="0.15">ローテーブル</option>
+<option value="0.2">チェスト</option>
+
+<!-- 家電 -->
+<option value="0.1">電子レンジ</option>
+<option value="0.1">炊飯器</option>
+<option value="0.15">掃除機</option>
+<option value="0.2">空気清浄機</option>
+<option value="0.2">ヒーター</option>
+<option value="0.15">扇風機</option>
+
+<!-- 特殊 -->
+<option value="0.3">エアコン</option>
+<option value="0.2">室外機</option>
+<option value="0.5">バイク</option>
+<option value="0.4">自転車</option>
+
+<!-- 小物 -->
+<option value="0.05">ダンボール1個</option>
+
+</select>
+
+<button onclick="addItemFull()">追加</button>
+
+<ul id="list_full"></ul>
+
+</div>
+
+<script>
+
+function addItemFull(){
+
+  let select = document.getElementById("item_full");
+  let val = Number(select.value);
+  let text = select.options[select.selectedIndex].text;
+
+  if(val === 0) return;
+
+  totalM3 += val;
+
+  let li = document.createElement("li");
+  li.innerText = text + "（" + val + "㎥）";
+  document.getElementById("list_full").appendChild(li);
+
+  updateM3();
+}
+
+</script>
+
+<!-- ===== ③：料金計算・プラン・相場・営業トーク（完全版） ===== -->
+
+<div class="card">
+<h3>料金計算</h3>
+
+<button onclick="calc()">見積もり計算</button>
+
+<p id="result_v3"></p>
+<p id="plan_v3"></p>
+<p id="market_v3"></p>
+<p id="detail_v3"></p>
+<p id="talk_v3"></p>
+
+</div>
+
+<script>
+
+// 既存calcを壊さず拡張
+(function(){
+
+  const oldCalc = window.calc;
+
+  window.calc = function(){
+
+    // 既存calcがあれば実行（①の簡易計算）
+    if(oldCalc){
+      oldCalc();
+    }
+
+    // 入力取得
+    let m3 = totalM3;
+    let distance = Number(document.getElementById("distance").value) || 0;
+    let stairs = Number(document.getElementById("stairs").value) || 0;
+    let busy = Number(document.getElementById("busy").value) || 0;
+
+    // ===== 基本料金 =====
+    let base = m3 * 10000;
+    let distanceFee = distance * 200;
+
+    let rawTotal = base + distanceFee + stairs + busy;
+
+    // ===== プラン自動振り分け =====
+    let planName = "";
+    let price = rawTotal;
+
+    if(m3 <= 1){
+      planName = "小口破格プラン";
+      price = rawTotal * 0.8;
+    }
+    else if(m3 <= 2){
+      planName = "小口特価プラン";
+      price = rawTotal * 0.9;
+    }
+    else{
+      planName = "小口拡張プラン";
+    }
+
+    price = Math.floor(price);
+
+    // ===== 相場表示（営業用に高め）=====
+    let marketLow = Math.floor(price * 1.2);
+    let marketHigh = Math.floor(price * 1.5);
+
+    // ===== 表示 =====
+    document.getElementById("result_v3").innerText =
+      "提示価格：¥" + price;
+
+    document.getElementById("plan_v3").innerText =
+      "適用プラン：" + planName;
+
+    document.getElementById("market_v3").innerText =
+      "相場目安：¥" + marketLow + "〜¥" + marketHigh;
+
+    document.getElementById("detail_v3").innerText =
+      "内訳：立米¥" + base +
+      " ＋ 距離¥" + distanceFee +
+      " ＋ 追加¥" + (stairs + busy);
+
+    // ===== 営業トーク（状況別）=====
+    let talk = "";
+
+    if(planName === "小口破格プラン"){
+      talk = "今回かなり荷物が少ないので、特別に破格で出しています。この条件は他社だとまず出ません。";
+    }
+    else if(planName === "小口特価プラン"){
+      talk = "通常より抑えた特価で出しています。相場と比べても安いラインです。";
+    }
+    else{
+      talk = "内容的に適正価格ですが、この条件としてはかなり良い内容になっています。";
+    }
+
+    if(busy > 0){
+      talk += " 繁忙期のため全体的に料金は上がっていますが、その中ではかなり抑えています。";
+    }
+
+    if(distance > 30){
+      talk += " 距離がある案件ですが、その分もかなり抑えています。";
+    }
+
+    document.getElementById("talk_v3").innerText =
+      "営業トーク：" + talk;
+
+  };
+
+})();
+
+</script>
+
+<!-- ===== ④：見積書・即決割引・カレンダリー・LINE ===== -->
+
+<div class="card">
+<h3>見積書</h3>
+
+<button onclick="createEstimate()">見積書作成</button>
+
+<label>即決割引（最大¥10,000）</label>
+<input id="discount" type="number" placeholder="例：5000">
+
+<p id="estimate"></p>
+
+<button onclick="sendLINE()">LINE送信</button>
+<button onclick="openCalendly()">日程調整（カレンダリー）</button>
+
+</div>
+
+<script>
+
+// 見積書作成
+function createEstimate(){
+
+  let name = document.getElementById("name").value;
+  let tel = document.getElementById("tel").value;
+  let from = document.getElementById("from").value;
+  let to = document.getElementById("to").value;
+
+  let d1 = document.getElementById("date1").value;
+  let d2 = document.getElementById("date2").value;
+  let d3 = document.getElementById("date3").value;
+
+  let discount = Number(document.getElementById("discount").value) || 0;
+  if(discount > 10000) discount = 10000;
+
+  let priceText = document.getElementById("result_v3").innerText;
+  let price = Number(priceText.replace(/[^0-9]/g, ""));
+
+  let finalPrice = price - discount;
+
+  let today = new Date().toLocaleDateString();
+
+  let text =
+`【見積書】
+
+屋号：万事屋そうちゃん
+担当：髙橋 爽
+作成日：${today}
+
+■お客様情報
+名前：${name}
+TEL：${tel}
+
+■引越し内容
+積み地：${from}
+降ろし地：${to}
+
+希望日：
+①${d1}
+②${d2}
+③${d3}
+
+■料金
+通常：¥${price}
+即決割引：-¥${discount}
+最終金額：¥${finalPrice}
+
+※本日中のご決定で割引適用となります。`;
+
+  document.getElementById("estimate").innerText = text;
+}
+
+// LINE送信
+function sendLINE(){
+
+  let text = document.getElementById("estimate").innerText;
+
+  if(!text){
+    alert("先に見積書を作成してください");
+    return;
+  }
+
+  let url = "https://line.me/R/msg/text/?" + encodeURIComponent(text);
+  window.open(url);
+}
+
+// カレンダリー
+function openCalendly(){
+  window.open("https://calendly.com/");
+}
+
+</script>
+
+<!-- ===== ⑤：案件管理・売上・利益・ステータス ===== -->
+
+<div class="card">
+<h3>案件管理</h3>
+
+<button onclick="saveCase()">未成約として保存</button>
+
+<h4>未成約</h4>
+<ul id="list_new"></ul>
+
+<h4>見積書送付済み</h4>
+<ul id="list_sent"></ul>
+
+<h4>追撃中</h4>
+<ul id="list_follow"></ul>
+
+<h4>成約</h4>
+<ul id="list_done"></ul>
+
+</div>
+
+<div class="card">
+<h3>売上・利益管理</h3>
+
+<p>売上合計：¥<span id="totalSales">0</span></p>
+
+<h4>経費入力</h4>
+<button onclick="addExpense()">経費追加</button>
+<div id="expenseList"></div>
+
+<p>経費合計：¥<span id="totalExpense">0</span></p>
+<p>利益：¥<span id="profit">0</span></p>
+
+<p>成約率：<span id="rate">0</span>%</p>
+
+</div>
+
+<script>
+
+let cases = [];
+let sales = 0;
+let expenses = [];
+
+// 案件保存
+function saveCase(){
+
+  let text = document.getElementById("estimate").innerText;
+
+  if(!text){
+    alert("見積書を作成してください");
+    return;
+  }
+
+  let id = Date.now();
+
+  let obj = {
+    id:id,
+    text:text,
+    status:"new"
+  };
+
+  cases.push(obj);
+  render();
+}
+
+// 描画
+function render(){
+
+  document.getElementById("list_new").innerHTML = "";
+  document.getElementById("list_sent").innerHTML = "";
+  document.getElementById("list_follow").innerHTML = "";
+  document.getElementById("list_done").innerHTML = "";
+
+  let total = cases.length;
+  let done = 0;
+
+  cases.forEach(c => {
+
+    let li = document.createElement("li");
+    li.innerText = c.text;
+
+    // ボタン群
+    if(c.status === "new"){
+
+      let sendBtn = document.createElement("button");
+      sendBtn.innerText = "見積送付";
+      sendBtn.onclick = () => {
+        c.status = "sent";
+        render();
+      };
+
+      li.appendChild(sendBtn);
+      document.getElementById("list_new").appendChild(li);
+    }
+
+    else if(c.status === "sent"){
+
+      let followBtn = document.createElement("button");
+      followBtn.innerText = "追撃";
+      followBtn.onclick = () => {
+        c.status = "follow";
+        render();
+      };
+
+      let doneBtn = document.createElement("button");
+      doneBtn.innerText = "成約";
+      doneBtn.onclick = () => {
+        c.status = "done";
+        addSale(c.text);
+        render();
+      };
+
+      li.appendChild(followBtn);
+      li.appendChild(doneBtn);
+
+      document.getElementById("list_sent").appendChild(li);
+    }
+
+    else if(c.status === "follow"){
+
+      let doneBtn = document.createElement("button");
+      doneBtn.innerText = "成約";
+      doneBtn.onclick = () => {
+        c.status = "done";
+        addSale(c.text);
+        render();
+      };
+
+      let delBtn = document.createElement("button");
+      delBtn.innerText = "削除";
+      delBtn.onclick = () => {
+        cases = cases.filter(x => x.id !== c.id);
+        render();
+      };
+
+      li.appendChild(doneBtn);
+      li.appendChild(delBtn);
+
+      document.getElementById("list_follow").appendChild(li);
+    }
+
+    else if(c.status === "done"){
+      done++;
+      document.getElementById("list_done").appendChild(li);
+    }
+
+  });
+
+  // 成約率
+  let rate = total ? Math.floor((done / total) * 100) : 0;
+  document.getElementById("rate").innerText = rate;
+
+  updateProfit();
+}
+
+// 売上追加
+function addSale(text){
+
+  let price = Number(text.replace(/[^0-9]/g, ""));
+  sales += price;
+
+  document.getElementById("totalSales").innerText = sales;
+}
+
+// 経費追加
+function addExpense(){
+
+  let div = document.createElement("div");
+
+  let input = document.createElement("input");
+  input.placeholder = "金額";
+
+  input.oninput = updateProfit;
+
+  div.appendChild(input);
+  document.getElementById("expenseList").appendChild(div);
+
+  expenses.push(input);
+}
+
+// 利益計算
+function updateProfit(){
+
+  let totalExpense = 0;
+
+  expenses.forEach(e=>{
+    totalExpense += Number(e.value) || 0;
+  });
+
+  document.getElementById("totalExpense").innerText = totalExpense;
+
+  let profit = sales - totalExpense;
+  document.getElementById("profit").innerText = profit;
+}
+
+</script>
+
+<!-- ===== ⑥：PDF・スプレッドシート連携・最終仕上げ ===== -->
+
+<div class="card">
+<h3>外部連携・保存</h3>
+
+<button onclick="downloadPDF()">PDF保存</button>
+<button onclick="sendToSheetFromUI()">スプレッドシート保存</button>
+
+</div>
+
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+
+// ===== PDF保存 =====
+function downloadPDF(){
+
+  let text = document.getElementById("estimate").innerText;
+
+  if(!text){
+    alert("先に見積書を作成してください");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  let lines = doc.splitTextToSize(text, 180);
+  doc.text(lines, 10, 10);
+
+  doc.save("見積書.pdf");
+}
+
+// ===== スプレッドシート送信 =====
+function sendToSheetFromUI(){
+
+  let name = document.getElementById("name").value;
+  let tel = document.getElementById("tel").value;
+  let from = document.getElementById("from").value;
+  let to = document.getElementById("to").value;
+
+  let priceText = document.getElementById("result_v3").innerText;
+  let price = Number(priceText.replace(/[^0-9]/g, ""));
+
+  let data = {
+    name:name,
+    tel:tel,
+    from:from,
+    to:to,
+    price:price
+  };
+
+  sendToSheet(data);
+}
+
+// ===== 実送信 =====
+function sendToSheet(data){
+
+  fetch("ここにAppsScriptのURL",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body: JSON.stringify(data)
+  })
+  .then(res=>res.text())
+  .then(res=>{
+    alert("スプレッドシート保存完了");
+  })
+  .catch(err=>{
+    alert("送信失敗");
+  });
+
+}
+
+// ===== バグ防止①：calc未実行対策 =====
+(function(){
+
+  let btn = document.querySelector("button[onclick='createEstimate()']");
+  if(btn){
+    btn.addEventListener("click", function(){
+
+      if(!document.getElementById("result_v3").innerText){
+        alert("先に見積もり計算をしてください");
+        throw new Error("calc未実行");
+      }
+
+    });
+  }
+
+})();
+
+// ===== バグ防止②：割引暴走防止 =====
+(function(){
+
+  let input = document.getElementById("discount");
+
+  if(input){
+    input.addEventListener("input", function(){
+
+      if(this.value > 10000){
+        this.value = 10000;
+      }
+
+      if(this.value < 0){
+        this.value = 0;
+      }
+
+    });
+  }
+
+})();
+
+// ===== バグ防止③：数値未入力対策 =====
+(function(){
+
+  let inputs = ["distance"];
+
+  inputs.forEach(id=>{
+    let el = document.getElementById(id);
+    if(el){
+      el.addEventListener("input", function(){
+        if(this.value < 0){
+          this.value = 0;
+        }
+      });
+    }
+  });
+
+})();
+
+</script>
