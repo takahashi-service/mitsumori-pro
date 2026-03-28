@@ -172,6 +172,22 @@ h2,h3{
 
 <script>
 let totalM3 = 0;
+function updateM3(){
+
+  let list = document.querySelectorAll("#list_full li");
+
+  totalM3 = 0;
+
+  list.forEach(li=>{
+    let match = li.innerText.match(/（([\d.]+)㎥）/);
+    if(match){
+      totalM3 += Number(match[1]);
+    }
+  });
+
+  document.getElementById("totalM3").innerText = totalM3.toFixed(2);
+  document.getElementById("m3").value = totalM3.toFixed(2);
+}
 
 function addItemFull(){
 
