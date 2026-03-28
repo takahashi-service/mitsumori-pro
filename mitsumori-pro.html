@@ -180,7 +180,7 @@ function addItemFull(){
 
   if(val === 0) return;
 
-  totalM3 += val;
+  let totalM3 = 0;
 
   let li = document.createElement("li");
   li.innerText = text + "（" + val + "㎥）";
@@ -225,6 +225,7 @@ function addItemFull(){
     let distance = Number(document.getElementById("distance").value) || 0;
     let stairs = Number(document.getElementById("stairs").value) || 0;
     let busy = Number(document.getElementById("busy").value) || 0;
+    let highway = Number(document.getElementById("highway").value) || 0;
 
     // ===== 基本料金 =====
 
@@ -235,7 +236,7 @@ let distanceFee = distance * 200;
 let highwayFee = highway ? distance * 50 : 0;
 
 // まず通常価格を作る
-let price = base + labor + m3Fee + distanceFee + stairs + highwayFee;
+let price = base + labor + m3Fee + distanceFee + stairs + highwayFee + busy;
 
 // ===== プラン =====
 let planName = "";
@@ -270,10 +271,13 @@ price = Math.floor(price);
       "相場目安：¥" + marketLow + "〜¥" + marketHigh;
 
     document.getElementById("detail_v3").innerText =
-      "内訳：立米¥" + base +
+      "内訳：基本¥" + base +
+      " ＋ 人件費¥" + labor +
+      " ＋ 立米¥" + Math.floor(m3Fee) +
       " ＋ 距離¥" + distanceFee +
-      " ＋ 追加¥" + (stairs + busy);
-
+      " ＋ 階段¥" + stairs +
+      " ＋ 高速¥" + highwayFee +
+      " ＋ 繁忙期¥" + busy;
     // ===== 営業トーク（状況別）=====
     let talk = "";
 
