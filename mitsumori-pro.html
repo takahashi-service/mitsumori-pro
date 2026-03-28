@@ -90,6 +90,8 @@ h2,h3{
 <option value="20000">繁忙期（+20,000円）</option>
 </select>
 
+</div>
+
 <!-- 立米表示 -->
 <div class="card">
 <h3>立米</h3>
@@ -176,7 +178,8 @@ function updateM3(){
   totalM3 = 0;
 
   list.forEach(li=>{
-    let match = li.innerText.match(/（([\d.]+)㎥）/);
+    let span = li.querySelector("span");
+    let match = span.innerText.match(/（([\d.]+)㎥）/);
     if(match){
       totalM3 += Number(match[1]);
     }
@@ -586,6 +589,11 @@ function addSale(text){
   sales += price;
 
   document.getElementById("totalSales").innerText = sales;
+}
+  function copyText(id){
+  let val = document.getElementById(id).value;
+  navigator.clipboard.writeText(val);
+  alert("コピーしました");
 }
 
 // 経費追加
