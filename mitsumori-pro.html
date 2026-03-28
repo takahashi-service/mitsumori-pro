@@ -160,7 +160,7 @@ h2,h3{
 <option value="1.0">自転車（中）</option>
 
 <!-- 小物 -->
-<option value="0.1">ダンボール1個</option>
+<option value="0.1">ダンボール</option>
 
 </select>
 
@@ -171,6 +171,7 @@ h2,h3{
 </div>
 
 <script>
+let totalM3 = 0;
 
 function addItemFull(){
 
@@ -179,8 +180,6 @@ function addItemFull(){
   let text = select.options[select.selectedIndex].text;
 
   if(val === 0) return;
-
-  let totalM3 = 0;
 
   let li = document.createElement("li");
   li.innerText = text + "（" + val + "㎥）";
