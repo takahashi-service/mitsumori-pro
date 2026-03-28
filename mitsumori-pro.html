@@ -176,7 +176,7 @@ function updateM3(){
   totalM3 = 0;
 
   list.forEach(li=>{
-    182 let match = li.innerText.match(/（([\d.]+)㎥）/);
+    let match = li.innerText.match(/（([\d.]+)㎥）/);
     if(match){
       totalM3 += Number(match[1]);
     }
