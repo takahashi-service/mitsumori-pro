@@ -585,10 +585,13 @@ function render(){
 // 売上追加
 function addSale(text){
 
-  let price = Number(text.replace(/[^0-9]/g, ""));
+  let match = text.match(/最終金額：¥(\d+)/);
+  let price = match ? Number(match[1]) : 0;
+
   sales += price;
 
-  document.getElementById("totalSales").innerText = sales;
+  document.getElementById("totalSales").innerText =
+    sales.toLocaleString();
 }
   function copyText(id){
   let val = document.getElementById(id).value;
