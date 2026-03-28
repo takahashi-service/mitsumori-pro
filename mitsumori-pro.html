@@ -179,7 +179,7 @@ function updateM3(){
   totalM3 = 0;
 
   list.forEach(li=>{
-    let match = li.innerText.match(/（([\d.]+)㎥）/);
+    182 let match = li.innerText.match(/（([\d.]+)㎥）/);
     if(match){
       totalM3 += Number(match[1]);
     }
@@ -198,7 +198,19 @@ function addItemFull(){
   if(val === 0) return;
 
   let li = document.createElement("li");
-  li.innerText = text + "（" + val + "㎥）";
+
+let span = document.createElement("span");
+span.innerText = text + "（" + val + "㎥）";
+
+let btn = document.createElement("button");
+btn.innerText = "削除";
+btn.onclick = function(){
+  li.remove();
+  updateM3();
+};
+
+li.appendChild(span);
+li.appendChild(btn);
   document.getElementById("list_full").appendChild(li);
 
   updateM3();
