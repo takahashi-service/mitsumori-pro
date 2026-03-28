@@ -78,6 +78,13 @@ h2,h3{
 <option value="3000">あり（+3,000円）</option>
 </select>
 
+<label>高速使用</label>
+<select id="highway">
+<option value="0">使わない</option>
+<option value="1">使う</option>
+</select>
+
+</div>
 <label>繁忙期</label>
 <select id="busy">
 <option value="0">通常</option>
@@ -220,28 +227,33 @@ function addItemFull(){
     let busy = Number(document.getElementById("busy").value) || 0;
 
     // ===== 基本料金 =====
-    let base = m3 * 10000;
-    let distanceFee = distance * 200;
 
-    let rawTotal = base + distanceFee + stairs + busy;
+let base = 10000;
+let labor = 20000;
+let m3Fee = m3 * 3000;
+let distanceFee = distance * 200;
+let highwayFee = highway ? distance * 50 : 0;
 
-    // ===== プラン自動振り分け =====
-    let planName = "";
-    let price = rawTotal;
+// まず通常価格を作る
+let price = base + labor + m3Fee + distanceFee + stairs + highwayFee;
 
-    if(m3 <= 1){
-      planName = "小口破格プラン";
-      price = rawTotal * 0.8;
-    }
-    else if(m3 <= 2){
-      planName = "小口特価プラン";
-      price = rawTotal * 0.9;
-    }
-    else{
-      planName = "小口拡張プラン";
-    }
+// ===== プラン =====
+let planName = "";
 
-    price = Math.floor(price);
+if(m3 <= 1){
+  planName = "小口破格プラン";
+  price = price * 0.8;
+}
+else if(m3 <= 2){
+  planName = "小口特価プラン";
+  price = price * 0.9;
+}
+else{
+  planName = "小口拡張プラン";
+}
+
+// 最後に丸める
+price = Math.floor(price);
 
     // ===== 相場表示（営業用に高め）=====
     let marketLow = Math.floor(price * 1.2);
