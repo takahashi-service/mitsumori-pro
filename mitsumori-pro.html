@@ -822,10 +822,7 @@ function render(){
       document.getElementById("list_follow").appendChild(li);
     }
 
-    else if(c.status === "done"){
-      done++;
-      document.getElementById("list_done").appendChild(li);
-    }
+    li.appendChild(delBtn);
 
   });
 
