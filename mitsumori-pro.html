@@ -585,9 +585,17 @@ function render(){
 // 売上追加
 function addSale(text){
 
-  let match = text.match(/最終金額：¥(\d+)/);
-  let price = match ? Number(match[1]) : 0;
+  let normalized = text.replace(/\r\n/g, "\n");
+  let lines = normalized.split("\n");
 
+  let line = lines.find(l => l.trim().startsWith("最終金額"));
+
+  if(!line) return;
+
+  let match = line.match(/¥([\d,]+)/);
+if(!match) return;
+
+let price = Number(match[1].replace(/,/g, ""));
   sales += price;
 
   document.getElementById("totalSales").innerText =
