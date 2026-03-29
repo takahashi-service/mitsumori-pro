@@ -1049,9 +1049,11 @@ function changeQty(btn, num){
 }
 
 // イベント
-document.querySelectorAll("input").forEach(el=>{
-  el.addEventListener("change", updateM3);
-  el.addEventListener("input", updateM3);
+window.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".item input").forEach(el=>{
+    el.addEventListener("change", updateM3);
+    el.addEventListener("input", updateM3);
+  });
 });
 
 </script>
