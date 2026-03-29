@@ -903,7 +903,6 @@ function updateProfit(){
 function downloadPDF(){
 
   let text = document.getElementById("estimate").innerText;
-
   if(!text){
     alert("先に見積書を作成してください");
     return;
@@ -912,8 +911,20 @@ function downloadPDF(){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
+  doc.setFontSize(18);
+  doc.text("見積書", 90, 15);
+
+  doc.setFontSize(10);
+  doc.text("万事屋そうちゃん", 10, 25);
+  doc.text("担当：髙橋 爽", 10, 30);
+
+  doc.setFontSize(12);
+
   let lines = doc.splitTextToSize(text, 180);
-  doc.text(lines, 10, 10);
+  doc.text(lines, 10, 50);
+
+  // 枠
+  doc.rect(5, 5, 200, 287);
 
   doc.save("見積書.pdf");
 }
