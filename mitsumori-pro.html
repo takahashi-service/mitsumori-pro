@@ -23,6 +23,23 @@ input,select,button,textarea{
   width:100%;
   padding:8px;
 }
+
+.item{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin-bottom:5px;
+}
+
+.item label{
+  flex:1;
+}
+
+.item input[type="number"]{
+  width:60px;
+  text-align:center;
+}
+
 button{
   background:#007bff;
   color:#fff;
@@ -101,122 +118,321 @@ h2,h3{
 
 </div>
 
-<!-- 家財選択（完全フル版） -->
+<!-- 家財選択（チェック式） -->
 <div class="card">
-<h3>家財選択（完全版）</h3>
+<h3>家財選択（チェック式）</h3>
 
-<select id="item_full">
-<option value="0">選択してください</option>
-
-<!-- 大型家具 -->
-<option value="1.2">冷蔵庫（大）</option>
-<option value="0.8">冷蔵庫（中）</option>
-<option value="0.6">冷蔵庫（小）</option>
-<option value="0.6">洗濯機</option>
-<option value="0.8">ドラム式</option>
-<option value="0.8">ダブルベッド</option>
-<option value="0.7">セミダブルベッド</option>
-<option value="0.5">シングルベッド</option>
-<option value="1.2">マットレス（Ｗ）</option>
-<option value="1.0">マットレス（ＳＷ）</option>
-<option value="0.8">マットレス（Ｓ）</option>
-<option value="0.8">ソファ（2人）</option>
-<option value="1.4">ソファ（3人）</option>
-<option value="2.0">タンス大</option>
-<option value="1.0">タンス中</option>
-<option value="0.8">タンス小</option>
-<option value="2.4">食器棚（大）</option>
-<option value="1.2">食器棚（中）</option>
-<option value="0.6">食器棚（小）</option>
-<option value="0.8">本棚（大）</option>
-<option value="0.6">本棚（中）</option>
-<option value="0.4">本棚（小）</option>
-<option value="0.2">カラーボックス</option>
-
-<!-- 中型家具 -->
-<option value="0.4">テレビ（40㌅~）</option>
-<option value="0.25">テレビ（32㌅~）</option>
-<option value="0.15">テレビ（24㌅~）</option>
-<option value="0.2">テレビ台</option>
-<option value="0.15">デスク</option>
-<option value="0.1">椅子</option>
-<option value="0.15">ローテーブル</option>
-<option value="0.2">チェスト</option>
-
-<!-- 家電 -->
-<option value="0.1">電子レンジ</option>
-<option value="0.1">炊飯器</option>
-<option value="0.15">掃除機</option>
-<option value="0.2">空気清浄機</option>
-<option value="0.2">ヒーター</option>
-<option value="0.15">扇風機</option>
-
-<!-- 特殊 -->
-<option value="0.3">エアコン</option>
-<option value="0.4">室外機</option>
-<option value="1.5">バイク</option>
-<option value="1.2">自転車（大）</option>
-<option value="1.0">自転車（中）</option>
-
-<!-- 小物 -->
-<option value="0.1">ダンボール</option>
-
-</select>
-
-<button onclick="addItemFull()">追加</button>
-
-<ul id="list_full"></ul>
-
+<div class="item">
+<label><input type="checkbox" data-m3="1.2">冷蔵庫（大）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
 </div>
 
-<script>
-let totalM3 = 0;
-function updateM3(){
+<div class="item">
+<label><input type="checkbox" data-m3="0.8">冷蔵庫（中）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
 
-  let list = document.querySelectorAll("#list_full li");
+<div class="item">
+<label><input type="checkbox" data-m3="0.6">冷蔵庫（小）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
 
-  totalM3 = 0;
+<div class="item">
+<label><input type="checkbox" data-m3="0.6">洗濯機</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
 
-  list.forEach(li=>{
-    let span = li.querySelector("span");
-    let match = span.innerText.match(/（([\d.]+)㎥）/);
-    if(match){
-      totalM3 += Number(match[1]);
-    }
-  });
+<div class="item">
+<label><input type="checkbox" data-m3="0.8">ドラム式</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
 
-  document.getElementById("totalM3").innerText = totalM3.toFixed(2);
-  document.getElementById("m3").value = totalM3.toFixed(2);
-}
+<div class="item">
+<label><input type="checkbox" data-m3="0.8">ダブルベッド</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
 
-function addItemFull(){
+<div class="item">
+<label><input type="checkbox" data-m3="0.7">セミダブルベッド</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
 
-  let select = document.getElementById("item_full");
-  let val = Number(select.value);
-  let text = select.options[select.selectedIndex].text;
+<div class="item">
+<label><input type="checkbox" data-m3="0.5">シングルベッド</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
 
-  if(val === 0) return;
+<div class="item">
+<label><input type="checkbox" data-m3="1.2">マットレス（W）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
 
-  let li = document.createElement("li");
+<div class="item">
+<label><input type="checkbox" data-m3="1.0">マットレス（SW）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
 
-let span = document.createElement("span");
-span.innerText = text + "（" + val + "㎥）";
+<div class="item">
+<label><input type="checkbox" data-m3="0.8">マットレス（S）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
 
-let btn = document.createElement("button");
-btn.innerText = "削除";
-btn.onclick = function(){
-  li.remove();
-  updateM3();
-};
+<div class="item">
+<label><input type="checkbox" data-m3="0.8">ソファ（2人）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
 
-li.appendChild(span);
-li.appendChild(btn);
-  document.getElementById("list_full").appendChild(li);
+<div class="item">
+<label><input type="checkbox" data-m3="1.4">ソファ（3人）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
 
-  updateM3();
-}
+<div class="item">
+<label><input type="checkbox" data-m3="2.0">タンス大</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
 
-</script>
+<div class="item">
+<label><input type="checkbox" data-m3="1.0">タンス中</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.8">タンス小</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="2.4">食器棚（大）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="1.2">食器棚（中）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.6">食器棚（小）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.8">本棚（大）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.6">本棚（中）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.4">本棚（小）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.2">カラーボックス</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<hr>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.4">テレビ（40㌅~）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.25">テレビ（32㌅~）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.15">テレビ（24㌅~）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.2">テレビ台</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.15">デスク</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.1">椅子</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.15">ローテーブル</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.2">チェスト</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<hr>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.1">電子レンジ</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.1">炊飯器</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.15">掃除機</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.2">空気清浄機</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.2">ヒーター</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.15">扇風機</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<hr>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.3">エアコン</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.4">室外機</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="1.5">バイク</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="1.2">自転車（大）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="1.0">自転車（中）</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<div class="item">
+<label><input type="checkbox" data-m3="0.1">ダンボール</label>
+<button onclick="changeQty(this,-1)">-</button>
+<input type="number" value="1" min="1">
+<button onclick="changeQty(this,1)">+</button>
+</div>
+
+<p>合計立米：<span id="totalM3">0</span> ㎥</p>
+<input id="m3" type="hidden">
+
+</div>
 
 <!-- ===== ③：料金計算・プラン・相場・営業トーク（完全版） ===== -->
 
@@ -771,5 +987,43 @@ function sendToSheet(data){
   });
 
 })();
+
+function updateM3(){
+
+  let total = 0;
+
+  document.querySelectorAll(".item").forEach(row=>{
+
+    let check = row.querySelector("input[type='checkbox']");
+    let qty = row.querySelector("input[type='number']");
+
+    if(check.checked){
+      total += Number(check.dataset.m3) * (Number(qty.value) || 1);
+    }
+
+  });
+
+  document.getElementById("totalM3").innerText = total.toFixed(2);
+  document.getElementById("m3").value = total.toFixed(2);
+}
+
+// ＋−ボタン
+function changeQty(btn, num){
+
+  let input = btn.parentElement.querySelector("input[type='number']");
+  let val = Number(input.value) + num;
+
+  if(val < 1) val = 1;
+
+  input.value = val;
+
+  updateM3();
+}
+
+// イベント
+document.querySelectorAll("input").forEach(el=>{
+  el.addEventListener("change", updateM3);
+  el.addEventListener("input", updateM3);
+});
 
 </script>
