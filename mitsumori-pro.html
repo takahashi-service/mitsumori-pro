@@ -781,9 +781,27 @@ function render(){
       let followBtn = document.createElement("button");
       followBtn.innerText = "追撃";
       followBtn.onclick = () => {
-        c.status = "follow";
-        render();
-      };
+
+  let msg = `${c.name}様
+
+お世話になっております！
+先日お見積りをお送りさせていただいた件ですが、その後いかがでしょうか？
+
+現在ご予約が埋まりやすくなっておりますので、
+お早めのご検討をおすすめしております。
+
+ご不明点などあればお気軽にご連絡ください！`;
+
+  let url = "https://line.me/R/msg/text/?" + encodeURIComponent(msg);
+
+  // 先に開く（重要）
+  window.open(url);
+
+  // ステータス変更
+  c.status = "follow";
+
+  render();
+};
 
       let doneBtn = document.createElement("button");
       doneBtn.innerText = "成約";
