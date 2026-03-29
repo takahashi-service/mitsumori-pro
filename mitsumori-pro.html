@@ -803,20 +803,6 @@ function render(){
   render();
 };
 
-      let doneBtn = document.createElement("button");
-      doneBtn.innerText = "成約";
-      doneBtn.onclick = () => {
-        c.status = "done";
-        addSale(c.text);
-        render();
-      };
-
-      li.appendChild(followBtn);
-      li.appendChild(doneBtn);
-
-      document.getElementById("list_sent").appendChild(li);
-    }
-
     else if(c.status === "follow"){
 
       let doneBtn = document.createElement("button");
@@ -842,8 +828,6 @@ delBtn.onclick = () => {
 
       document.getElementById("list_follow").appendChild(li);
     }
-
-    li.appendChild(delBtn);
 
   });
 
