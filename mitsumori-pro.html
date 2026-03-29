@@ -736,14 +736,17 @@ function saveCase(){
 
   let id = Date.now();
 
-  let obj = {
-    id:id,
-    text:text,
-    status:"new"
-  };
+let name = document.getElementById("name").value;
 
-  cases.push(obj);
-  render();
+let obj = {
+  id:id,
+  text:text,
+  name:name,
+  status:"new"
+};
+
+cases.push(obj);
+render();
 }
 
 // 描画
