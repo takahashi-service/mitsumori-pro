@@ -1025,6 +1025,8 @@ function updateM3(){
     let check = row.querySelector("input[type='checkbox']");
     let qty = row.querySelector("input[type='number']");
 
+    if(!check) return;
+    
     if(check.checked){
       total += Number(check.dataset.m3) * (Number(qty.value) || 1);
     }
