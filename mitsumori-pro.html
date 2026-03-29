@@ -509,6 +509,16 @@ let highwayFee = highway ? distance * 50 : 0;
 // まず通常価格を作る
 let price = base + labor + m3Fee + distanceFee + stairs + highwayFee + busy;
 
+// ===== ピストン追加 =====
+let pistonCost = 0;
+let maxCapacity = 5;
+
+if(m3 > maxCapacity){
+  let times = Math.ceil(m3 / maxCapacity);
+  pistonCost = (times - 1) * 15000;
+  price += pistonCost;
+}
+
 // ===== プラン =====
 let planName = "";
 
