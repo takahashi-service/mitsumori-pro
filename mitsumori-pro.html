@@ -810,11 +810,14 @@ function render(){
       };
 
       let delBtn = document.createElement("button");
-      delBtn.innerText = "削除";
-      delBtn.onclick = () => {
-        cases = cases.filter(x => x.id !== c.id);
-        render();
-      };
+delBtn.innerText = "削除";
+
+delBtn.onclick = () => {
+  if(confirm(`${c.name} を削除する？`)){
+    cases = cases.filter(x => x.id !== c.id);
+    render();
+  }
+};
 
       li.appendChild(doneBtn);
       li.appendChild(delBtn);
