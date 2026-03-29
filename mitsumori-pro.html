@@ -67,13 +67,15 @@ h2,h3{
 <input id="name" placeholder="名前">
 <input id="tel" placeholder="電話番号">
 
-<label>積み地</label>
-<input id="from" placeholder="例：東京都渋谷区">
-<button onclick="copyText('from')">積み地コピー</button>
+<div class="item">
+  <input id="from" placeholder="例：東京都渋谷区">
+  <button onclick="copyText('from')">コピー</button>
+</div>
 
-<label>降ろし地</label>
-<input id="to" placeholder="例：神奈川県横浜市">
-<button onclick="copyText('to')">降ろし地コピー</button>
+<div class="item">
+  <input id="to" placeholder="例：神奈川県横浜市">
+  <button onclick="copyText('to')">コピー</button>
+</div>
 
 <label>希望日</label>
 <input id="date1" placeholder="第1希望">
