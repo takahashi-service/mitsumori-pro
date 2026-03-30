@@ -479,27 +479,6 @@ h2,h3{
 
 <script>
 
-// 既存calcを壊さず拡張
-(function(){
-
-  const oldCalc = window.calc;
-
-  window.calc = function(){
-
-    // 既存calcがあれば実行（①の簡易計算）
-    if(oldCalc){
-      oldCalc();
-    }
-
-    // 入力取得
-    let m3 = Number(document.getElementById("totalM3").textContent) || 0;
-    let distance = Number(document.getElementById("distance").value) || 0;
-    let stairs = Number(document.getElementById("stairs").value) || 0;
-    let busy = Number(document.getElementById("busy").value) || 0;
-    let highway = Number(document.getElementById("highway").value) || 0;
-
-<script>
-
 // ===== 新calc（料金ロジック完全版）=====
 (function(){
 
