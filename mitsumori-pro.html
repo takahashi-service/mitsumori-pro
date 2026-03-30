@@ -498,26 +498,110 @@ h2,h3{
     let busy = Number(document.getElementById("busy").value) || 0;
     let highway = Number(document.getElementById("highway").value) || 0;
 
+<script>
+
+// ===== 新calc（料金ロジック完全版）=====
+(function(){
+
+  window.calc = function(){
+
+    // 入力取得
+    let m3 = Number(document.getElementById("totalM3").textContent) || 0;
+    let distance = Number(document.getElementById("distance").value) || 0;
+    let stairs = Number(document.getElementById("stairs").value) || 0;
+    let busy = Number(document.getElementById("busy").value) || 0;
+    let highway = Number(document.getElementById("highway").value) || 0;
+
+    // ===== 単価テーブル =====
+    function getBasePrice(v){
+      if(v <= 1) return 30000;
+      if(v <= 3) return 45000;
+      if(v <= 5) return 60000;
+      return 0;
+    }
+
     // ===== 基本料金 =====
+    let basePrice = 0;
 
-let base = 10000;
-let labor = 20000;
-let m3Fee = m3 * 3000;
-let distanceFee = distance * 200;
-let highwayFee = highway ? distance * 50 : 0;
+    if(m3 <= 5){
+      basePrice = getBasePrice(m3);
+    }else{
+      let first = 5;
+      let rest = m3 - 5;
 
-// まず通常価格を作る
-let price = base + labor + m3Fee + distanceFee + stairs + highwayFee + busy;
+      let firstPrice = getBasePrice(first);
+      let restPrice = getBasePrice(rest);
 
-// ===== ピストン追加 =====
-let pistonCost = 0;
-let maxCapacity = 5;
+      basePrice = firstPrice + restPrice - 10000;
+    }
 
-if(m3 > maxCapacity){
-  let times = Math.ceil(m3 / maxCapacity);
-  pistonCost = (times - 1) * 15000;
-  price += pistonCost;
+    // ===== 距離最適化（弱め設定）=====
+    let distanceFee = distance * 150; // ←調整済
+
+    // ===== 高速 =====
+    let highwayFee = highway ? distance * 30 : 0;
+
+    // ===== 合計（税抜）=====
+    let subtotal = basePrice + distanceFee + stairs + busy + highwayFee;
+
+    // ===== 最低保証 =====
+    if(subtotal < 20000) subtotal = 20000;
+
+    // ===== 税込み =====
+    let tax = Math.floor(subtotal * 0.1);
+    let total = subtotal + tax;
+
+    // ===== 相場 =====
+    // ===== 相場（リアル立米レンジ）=====
+let marketLow = 0;
+let marketHigh = 0;
+
+if(m3 <= 1){
+  marketLow = 30000;
+  marketHigh = 50000;
 }
+else if(m3 <= 3){
+  marketLow = 50000;
+  marketHigh = 80000;
+}
+else if(m3 <= 5){
+  marketLow = 80000;
+  marketHigh = 120000;
+}
+else if(m3 <= 8){
+  marketLow = 100000;
+  marketHigh = 180000;
+}
+else{
+  marketLow = 150000;
+  marketHigh = 250000;
+}
+
+    // ===== 表示 =====
+    document.getElementById("result_v3").innerText =
+      "提示価格：¥" + total.toLocaleString() + "（税込）";
+
+    document.getElementById("plan_v3").innerText =
+      "基本料金：¥" + basePrice.toLocaleString();
+
+    document.getElementById("market_v3").innerText =
+      "相場目安：¥" + marketLow.toLocaleString() + "〜¥" + marketHigh.toLocaleString();
+
+    document.getElementById("detail_v3").innerText =
+      "内訳（税抜）：基本¥" + basePrice +
+      " ＋ 距離¥" + distanceFee +
+      " ＋ 階段¥" + stairs +
+      " ＋ 繁忙期¥" + busy +
+      " ＋ 高速¥" + highwayFee;
+
+    document.getElementById("talk_v3").innerText =
+      "営業トーク：相場より抑えた価格でご案内しています。この条件ではかなりお得な内容です。";
+
+  };
+
+})();
+
+</script>
 
 // ===== プラン =====
 let planName = "";
