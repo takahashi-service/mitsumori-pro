@@ -1074,20 +1074,20 @@ function sendToSheetFromUI(){
 }
 
 function sendToSheet(data){
-  fetch("https://script.google.com/macros/s/AKfycbzoG_GaB3Jh24P1f5lzLHFU23PrJBSefE5OfXpsf3ZhpYg51SGJ_XepJ32LptnhCsYq/exec",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body: JSON.stringify(data)
-  })
-  .then(res => res.text())
-  .then(() => {
-    alert("スプレッドシート保存完了");
-  })
-  .catch(() => {
-    alert("送信失敗");
-  });
+  fetch("https://script.google.com/macros/s/AKfycbzo...", {
+  method: "POST",
+  mode: "no-cors",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(data)
+})
+.then(() => {
+  alert("スプレッドシート保存完了");
+})
+.catch(() => {
+  alert("送信失敗");
+});
 }
 
 /* ---------------------------
