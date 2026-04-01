@@ -639,17 +639,26 @@ document.getElementById("detail_v3").innerText =
 <!-- ===== ④：見積書・即決割引・カレンダリー・LINE ===== -->
 
 <div class="card">
-<h3>見積書</h3>
+<h3>即決オファー</h3>
 
-<button onclick="createEstimate()">見積書作成</button>
+<div style="background:#ffecec; padding:10px; border-radius:10px; margin-bottom:10px;">
+  <strong>🔥本日限定</strong><br>
+  今決めていただければ最大¥10,000割引可能です
+</div>
 
-<label>即決割引（最大¥10,000）</label>
+<label>割引額（最大¥10,000）</label>
 <input id="discount" type="number" placeholder="例：5000">
 
-<p id="estimate"></p>
+<button onclick="createEstimate()">見積書を作成する</button>
 
-<button onclick="sendLINE()">LINE送信</button>
-<button onclick="openCalendly()">日程調整（カレンダリー）</button>
+<div style="margin-top:10px; background:#f9f9f9; padding:10px; border-radius:10px;">
+  <p id="estimate"></p>
+</div>
+
+<div style="margin-top:10px;">
+  <button onclick="sendLINE()">📩 LINEで送信（おすすめ）</button>
+  <button onclick="openCalendly()">📅 日程を確定する</button>
+</div>
 
 </div>
 
