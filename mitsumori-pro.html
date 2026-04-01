@@ -1062,17 +1062,25 @@ function sendToSheetFromUI(){
 
   let data = getEstimateData();
 
+  // 追客日を2日後で自動設定
+  let followupDate = new Date();
+  followupDate.setDate(followupDate.getDate() + 2);
+
+  let yyyy = followupDate.getFullYear();
+  let mm = String(followupDate.getMonth() + 1).padStart(2, "0");
+  let dd = String(followupDate.getDate()).padStart(2, "0");
+
   let payload = {
-  name: data.name,
-  tel: data.tel,
-  from: data.from,
-  to: data.to,
-  price: data.price,
-  discount: data.discount,
-  finalPrice: data.finalPrice,
-  followup: "",
-  memo: ""
-};
+    name: data.name,
+    tel: data.tel,
+    from: data.from,
+    to: data.to,
+    price: data.price,
+    discount: data.discount,
+    finalPrice: data.finalPrice,
+    followup: `${yyyy}/${mm}/${dd}`,
+    memo: document.getElementById("talk_v3").innerText || ""
+  };
 
   sendToSheet(payload);
 }
