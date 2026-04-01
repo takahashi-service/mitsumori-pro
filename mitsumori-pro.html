@@ -495,143 +495,113 @@ h2,h3{
 <script>
 
 // ===== 新calc（料金ロジック完全版）=====
-(function(){
+window.calc = function(){
 
-  window.calc = function(){
+  let m3 = Number(document.getElementById("m3").value) || 0;
+  let distance = Number(document.getElementById("distance").value) || 0;
+  let stairs = Number(document.getElementById("stairs").value) || 0;
+  let busy = Number(document.getElementById("busy").value) || 0;
+  let highway = Number(document.getElementById("highway").value) || 0;
 
-    // 入力取得
-    let m3 = Number(document.getElementById("totalM3").textContent) || 0;
-    let distance = Number(document.getElementById("distance").value) || 0;
-    let stairs = Number(document.getElementById("stairs").value) || 0;
-    let busy = Number(document.getElementById("busy").value) || 0;
-    let highway = Number(document.getElementById("highway").value) || 0;
+  let basePrice = 0;
 
-    // ===== 単価テーブル =====
-    function getBasePrice(v){
-      if(v <= 1) return 30000;
-      if(v <= 3) return 45000;
-      if(v <= 5) return 60000;
-      return 0;
-    }
+  if(m3 <= 1) basePrice = 30000;
+  else if(m3 <= 3) basePrice = 45000;
+  else if(m3 <= 5) basePrice = 60000;
+  else basePrice = 60000 + (m3 - 5) * 8000;
 
-    // ===== 基本料金 =====
-    let basePrice = 0;
+  let distanceFee = distance * 150;
 
-    if(m3 <= 5){
-      basePrice = getBasePrice(m3);
-    }else{
-      let first = 5;
-      let rest = m3 - 5;
+  let highwayFee = 0;
+  if(highway){
+    highwayFee = Math.min(distance * 30, 5000);
+  }
 
-      let firstPrice = getBasePrice(first);
-      let restPrice = getBasePrice(rest);
+  let smallAdjust = 0;
+  if(m3 <= 1) smallAdjust = 5000;
 
-      basePrice = firstPrice + restPrice - 10000;
-    }
+  let subtotal = basePrice + distanceFee + stairs + busy + highwayFee + smallAdjust;
 
-    // ===== 距離最適化（弱め設定）=====
-    let distanceFee = distance * 150; // ←調整済
+  if(subtotal < 20000) subtotal = 20000;
 
-    // ===== 高速 =====
-    let highwayFee = highway ? distance * 30 : 0;
+  let warning = "";
+  if(subtotal < 25000){
+    warning = "⚠ 利益が薄い可能性あり";
+  }
 
-    // ===== 合計（税抜）=====
-    let subtotal = basePrice + distanceFee + stairs + busy + highwayFee;
+  let tax = Math.floor(subtotal * 0.1);
+  let total = subtotal + tax;
 
-    // ===== 最低保証 =====
-    if(subtotal < 20000) subtotal = 20000;
+  // ★1000円切り上げ
+  total = Math.ceil(total / 1000) * 1000;
 
-    // ===== 税込み =====
-    let tax = Math.floor(subtotal * 0.1);
-    let total = subtotal + tax;
+  let marketLow = 0;
+  let marketHigh = 0;
 
-    // ===== 相場 =====
-    // ===== 相場（リアル立米レンジ）=====
-let marketLow = 0;
-let marketHigh = 0;
+  if(m3 <= 1){
+    marketLow = 30000;
+    marketHigh = 50000;
+  }
+  else if(m3 <= 3){
+    marketLow = 50000;
+    marketHigh = 80000;
+  }
+  else if(m3 <= 5){
+    marketLow = 80000;
+    marketHigh = 120000;
+  }
+  else{
+    marketLow = 100000;
+    marketHigh = 180000;
+  }
 
-if(m3 <= 1){
-  marketLow = 30000;
-  marketHigh = 50000;
-}
-else if(m3 <= 3){
-  marketLow = 50000;
-  marketHigh = 80000;
-}
-else if(m3 <= 5){
-  marketLow = 80000;
-  marketHigh = 120000;
-}
-else if(m3 <= 8){
-  marketLow = 100000;
-  marketHigh = 180000;
-}
-else{
-  marketLow = 150000;
-  marketHigh = 250000;
-}
+  // ★繁忙期相場反映
+  if(busy > 0){
+    marketLow += 20000;
+    marketHigh += 30000;
+  }
 
-// ===== プラン =====
-let planName = "";
+  let planName = "";
 
-if(m3 <= 1){
-  planName = "小口破格プラン（最安優先）";
-}
-else if(m3 <= 3){
-  planName = "小口特価プラン（バランス型）";
-}
-else{
-  planName = "標準プラン（通常価格）";
-}
+  if(m3 <= 1) planName = "小口特化プラン";
+  else if(m3 <= 3) planName = "バランスプラン";
+  else planName = "標準プラン";
 
-// ===== 営業トーク =====
-let talk = "";
+  let talk = "今回の条件で最適な料金に調整しています。";
 
-if(planName.includes("破格")){
-  talk = "今回かなり荷物が少ないため、特別に破格でご案内しています。この条件はなかなか出ません。";
-}
-else if(planName.includes("特価")){
-  talk = "通常より抑えた特価でご案内しています。相場と比べても安いラインです。";
-}
-else{
-  talk = "内容的には適正価格ですが、この条件としてはかなり良い内容になっています。";
-}
+  if(total < marketLow){
+    talk += " 相場よりかなり安い条件です。";
+  }
 
-if(busy > 0){
-  talk += " 繁忙期で全体的に料金が上がる中でも、できるだけ抑えています。";
-}
+  if(busy > 0){
+    talk += " 繁忙期の相場と比較しても抑えています。";
+  }
 
-if(distance > 30){
-  talk += " 距離がありますが、その分もかなり抑えてあります。";
-}
+  if(distance > 30){
+    talk += " 距離がありますが、かなり抑えています。";
+  }
 
-if(stairs > 0){
-  talk += " 階段作業も含めた料金としては、かなり良心的な設定です。";
-}
+  talk += " 本日中のご決定でこの金額で確定可能です。";
 
-talk += " 本日中にご決定いただければ、この金額で確定可能です。";
+  document.getElementById("result_v3").innerText =
+    "お支払い金額：¥" + total.toLocaleString() + "（税込・当日現金）";
 
-// ===== 表示 =====
-document.getElementById("result_v3").innerText =
-  "提示価格：¥" + total.toLocaleString() + "（税込）";
+  document.getElementById("plan_v3").innerText =
+    "適用プラン：" + planName + "（基本¥" + basePrice.toLocaleString() + "） " + warning;
 
-document.getElementById("plan_v3").innerText =
-  "適用プラン：" + planName + "（基本料金¥" + basePrice.toLocaleString() + "）";
+  document.getElementById("market_v3").innerText =
+    "相場（" + (busy > 0 ? "繁忙期" : "通常") + "）：¥" +
+    marketLow.toLocaleString() + "〜¥" + marketHigh.toLocaleString();
 
-document.getElementById("talk_v3").innerText =
-  "営業トーク：" + talk;
+  document.getElementById("detail_v3").innerText =
+    "内訳（税抜）：基本¥" + basePrice +
+    " ＋ 距離¥" + distanceFee +
+    " ＋ 階段¥" + stairs +
+    " ＋ 繁忙期¥" + busy +
+    " ＋ 高速¥" + highwayFee;
 
-document.getElementById("market_v3").innerText =
-  "相場目安：¥" + marketLow.toLocaleString() + "〜¥" + marketHigh.toLocaleString();
-
-document.getElementById("detail_v3").innerText =
-  "内訳（税抜）：基本¥" + basePrice +
-  " ＋ 距離¥" + distanceFee +
-  " ＋ 階段¥" + stairs +
-  " ＋ 繁忙期¥" + busy +
-  " ＋ 高速¥" + highwayFee;
-  };
-
+  document.getElementById("talk_v3").innerText = talk;
+};
 })();
 
 </script>
