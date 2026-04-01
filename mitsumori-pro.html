@@ -1063,12 +1063,16 @@ function sendToSheetFromUI(){
   let data = getEstimateData();
 
   let payload = {
-    name: data.name,
-    tel: data.tel,
-    from: data.from,
-    to: data.to,
-    price: data.finalPrice
-  };
+  name: data.name,
+  tel: data.tel,
+  from: data.from,
+  to: data.to,
+  price: data.price,
+  discount: data.discount,
+  finalPrice: data.finalPrice,
+  followup: "",
+  memo: ""
+};
 
   sendToSheet(payload);
 }
