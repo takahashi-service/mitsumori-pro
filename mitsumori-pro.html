@@ -947,7 +947,7 @@ function addSale(text){
   let normalized = text.replace(/\r\n/g, "\n");
   let lines = normalized.split("\n");
 
-  let line = lines.find(l => l.trim().startsWith("最終金額"));
+  let line = lines.find(l => l.includes("お支払い金額"));
 
   if(!line) return;
 
