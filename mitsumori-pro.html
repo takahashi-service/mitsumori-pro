@@ -859,6 +859,8 @@ function render(){
 
   cases.forEach(c => {
 
+    if(c.status === "done") done++;
+
     let li = document.createElement("li");
     li.innerText = c.text;
 
@@ -1016,6 +1018,8 @@ function updateProfit(){
 
 // ===== PDF保存 =====
 function downloadPDF(){
+
+  createEstimatePDF();
 
   let text = document.getElementById("estimate").innerText;
   if(!text){
