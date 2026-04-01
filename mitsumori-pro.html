@@ -623,7 +623,7 @@ function getEstimateData(){
   if(discount < 0) discount = 0;
 
   let finalPrice = price - discount;
-  if(finalPrice < 0) finalPrice = 0;
+if(finalPrice < 20000) finalPrice = 20000;
 
   let today = new Date().toLocaleDateString();
 
