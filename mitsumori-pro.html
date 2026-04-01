@@ -910,6 +910,10 @@ document.getElementById("list_sent").appendChild(li);
 
     else if(c.status === "follow"){
 
+    else if(c.status === "done"){
+document.getElementById("list_done").appendChild(li);
+}
+
       let doneBtn = document.createElement("button");
       doneBtn.innerText = "成約";
       doneBtn.onclick = () => {
