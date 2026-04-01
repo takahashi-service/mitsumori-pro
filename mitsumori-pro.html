@@ -2,13 +2,16 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>見積もりPRO V13（完全版）</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>見積もりPRO V14（事業化対応版）</title>
 
 <style>
 body{
-  font-family:sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
   background:#f5f5f5;
   padding:20px;
+  margin:0;
+  color:#222;
 }
 .card{
   background:#fff;
@@ -17,486 +20,694 @@ body{
   border-radius:10px;
   box-shadow:0 0 5px rgba(0,0,0,0.1);
 }
-
-.item{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:8px;
-}
-
-.item label{
-  flex:2;
-  font-size:16px;
-  font-weight:bold;
-}
-
-.item input[type="number"]{
-  width:50px;
-  font-size:14px;
-}
-
-.item button{
-  width:35px;
-  padding:5px;
-  font-size:14px;
-}
-
-.item input{
-  flex:1;
-}
-
-.item button{
-  width:90px;
-  padding:8px;
-  white-space:nowrap;
-}
-
-input,select,textarea{
-  font-size:16px;
-  margin:5px 0;
-  width:100%;
-  padding:8px;
-}
-
 .item{
   display:flex;
   align-items:center;
   gap:5px;
   margin-bottom:5px;
 }
-
 .item label{
   flex:1;
+  font-size:16px;
+  font-weight:bold;
 }
-
+.item input{
+  flex:1;
+}
 .item input[type="number"]{
   width:60px;
   text-align:center;
+  flex:none;
 }
-
+.item button{
+  width:90px;
+  padding:8px;
+  white-space:nowrap;
+}
+input,select,textarea{
+  font-size:16px;
+  margin:5px 0;
+  width:100%;
+  padding:8px;
+  box-sizing:border-box;
+}
 button{
   background:#007bff;
   color:#fff;
   border:none;
   border-radius:5px;
+  padding:10px 12px;
+  cursor:pointer;
 }
-h2,h3{
-  margin-bottom:10px;
+button:hover{
+  opacity:0.92;
+}
+h2,h3,h4{
+  margin:0 0 10px 0;
 }
 .small{
   font-size:12px;
   color:#666;
+}
+.result-box{
+  margin-top:10px;
+  padding:12px;
+  background:#f0f8ff;
+  border-radius:10px;
+}
+.sales-box{
+  margin-top:10px;
+  background:#fff3cd;
+  padding:10px;
+  border-radius:10px;
+}
+.offer-box{
+  background:#ffecec;
+  padding:10px;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+.output-box{
+  margin-top:10px;
+  background:#f9f9f9;
+  padding:10px;
+  border-radius:10px;
+  white-space:pre-wrap;
+}
+ul{
+  padding-left:20px;
+}
+li{
+  margin-bottom:10px;
+  white-space:pre-wrap;
+}
+li button{
+  margin-top:6px;
+  margin-right:6px;
+}
+hr{
+  border:none;
+  border-top:1px solid #ddd;
+  margin:12px 0;
 }
 </style>
 </head>
 
 <body>
 
-<h2>見積もりPRO V13（完全版）</h2>
+<h2>見積もりPRO V14（事業化対応版）</h2>
 
 <div class="card">
-<h3>操作手順</h3>
-<p>①顧客情報 → ②条件入力 → ③家財選択 → ④計算 → ⑤送信</p>
+  <h3>操作手順</h3>
+  <p>①顧客情報 → ②条件入力 → ③家財選択 → ④計算 → ⑤営業LINE or PDF見積書作成 → ⑥送信・保存</p>
 </div>
 
 <!-- 顧客情報 -->
 <div class="card">
-<h3>顧客情報</h3>
+  <h3>顧客情報</h3>
 
-<input id="name" placeholder="名前">
-<input id="tel" placeholder="電話番号">
+  <input id="name" placeholder="名前">
+  <input id="tel" placeholder="電話番号">
 
-<div class="item">
-  <input id="from" placeholder="例：東京都渋谷区">
-  <button onclick="copyText('from')">コピー</button>
-</div>
+  <div class="item">
+    <input id="from" placeholder="例：東京都渋谷区">
+    <button onclick="copyText('from')">コピー</button>
+  </div>
 
-<div class="item">
-  <input id="to" placeholder="例：神奈川県横浜市">
-  <button onclick="copyText('to')">コピー</button>
-</div>
+  <div class="item">
+    <input id="to" placeholder="例：神奈川県横浜市">
+    <button onclick="copyText('to')">コピー</button>
+  </div>
 
-<label>希望日</label>
-<input id="date1" placeholder="第1希望">
-<input id="date2" placeholder="第2希望">
-<input id="date3" placeholder="第3希望">
-
+  <label>希望日</label>
+  <input id="date1" placeholder="第1希望">
+  <input id="date2" placeholder="第2希望">
+  <input id="date3" placeholder="第3希望">
 </div>
 
 <!-- 基本条件 -->
 <div class="card">
-<h3>基本条件</h3>
+  <h3>基本条件</h3>
 
-<label>距離（km）</label>
-<input id="distance" type="number" placeholder="例：25">
+  <label>距離（km）</label>
+  <input id="distance" type="number" placeholder="例：25">
 
-<label>階段</label>
-<select id="stairs">
-<option value="0">なし</option>
-<option value="3000">あり（+3,000円）</option>
-</select>
+  <label>階段</label>
+  <select id="stairs">
+    <option value="0">なし</option>
+    <option value="3000">あり（+3,000円）</option>
+  </select>
 
-<label>高速使用</label>
-<select id="highway">
-<option value="0">使わない</option>
-<option value="1">使う</option>
-</select>
+  <label>高速使用</label>
+  <select id="highway">
+    <option value="0">使わない</option>
+    <option value="1">使う</option>
+  </select>
 
-<label>繁忙期</label>
-<select id="busy">
-<option value="0">通常</option>
-<option value="20000">繁忙期（+20,000円）</option>
-</select>
-
+  <label>繁忙期</label>
+  <select id="busy">
+    <option value="0">通常</option>
+    <option value="20000">繁忙期（+20,000円）</option>
+  </select>
 </div>
 
-<!-- 家財選択（チェック式） -->
+<!-- 家財選択 -->
 <div class="card">
-<h3>家財選択（チェック式）</h3>
+  <h3>家財選択（チェック式）</h3>
 
-<div class="item">
-<label><input type="checkbox" data-m3="1.2">冷蔵庫（大）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
+  <div class="item">
+    <label><input type="checkbox" data-m3="1.2">冷蔵庫（大）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.8">冷蔵庫（中）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.6">冷蔵庫（小）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.6">洗濯機</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.8">ドラム式</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.8">ダブルベッド</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.7">セミダブルベッド</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.5">シングルベッド</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="1.2">マットレス（W）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="1.0">マットレス（SW）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.8">マットレス（S）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.8">ソファ（2人）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="1.4">ソファ（3人）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="2.0">タンス大</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="1.0">タンス中</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.8">タンス小</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="2.4">食器棚（大）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="1.2">食器棚（中）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.6">食器棚（小）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.8">本棚（大）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.6">本棚（中）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.4">本棚（小）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.2">カラーボックス</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <hr>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.4">テレビ（40㌅~）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.25">テレビ（32㌅~）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.15">テレビ（24㌅~）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.2">テレビ台</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.15">デスク</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.1">椅子</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.15">ローテーブル</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.2">チェスト</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <hr>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.1">電子レンジ</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.1">炊飯器</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.15">掃除機</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.2">空気清浄機</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.2">ヒーター</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.15">扇風機</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <hr>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.3">エアコン</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.4">室外機</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="1.5">バイク</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="1.2">自転車（大）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="1.0">自転車（中）</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <div class="item">
+    <label><input type="checkbox" data-m3="0.1">ダンボール</label>
+    <button onclick="changeQty(this,-1)">-</button>
+    <input type="number" value="1" min="1">
+    <button onclick="changeQty(this,1)">+</button>
+  </div>
+
+  <p>合計立米：<span id="totalM3">0</span> ㎥</p>
+  <input id="m3" type="hidden">
 </div>
 
-<div class="item">
-<label><input type="checkbox" data-m3="0.8">冷蔵庫（中）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
+<!-- 料金計算 -->
+<div class="card">
+  <h3>料金計算</h3>
+  <button onclick="calc()">見積もり計算</button>
+
+  <div class="result-box">
+    <h2 id="result_v3" style="color:#007bff;"></h2>
+    <p id="plan_v3"></p>
+    <p id="market_v3" class="small"></p>
+  </div>
+
+  <div style="margin-top:10px;">
+    <h4>料金内訳</h4>
+    <p id="detail_v3"></p>
+  </div>
+
+  <div class="sales-box">
+    <h4>営業ポイント</h4>
+    <p id="talk_v3"></p>
+  </div>
 </div>
 
-<div class="item">
-<label><input type="checkbox" data-m3="0.6">冷蔵庫（小）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
+<!-- 即決オファー -->
+<div class="card">
+  <h3>即決オファー</h3>
+
+  <div class="offer-box">
+    <strong>🔥本日限定</strong><br>
+    今決めていただければ最大¥10,000割引可能です
+  </div>
+
+  <label>割引額（最大¥10,000）</label>
+  <input id="discount" type="number" placeholder="例：5000">
+
+  <button onclick="createEstimate()">営業LINE作成</button>
+  <button onclick="createEstimatePDF()">見積書作成（PDF用）</button>
+
+  <div class="output-box">
+    <p id="estimate"></p>
+  </div>
+
+  <div style="margin-top:10px;">
+    <button onclick="sendLINE()">📩 LINEで送信（おすすめ）</button>
+    <button onclick="openCalendly()">📅 日程を確定する</button>
+  </div>
 </div>
 
-<div class="item">
-<label><input type="checkbox" data-m3="0.6">洗濯機</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
+<!-- 案件管理 -->
+<div class="card">
+  <h3>案件管理</h3>
+  <button onclick="saveCase()">未成約として保存</button>
+
+  <h4>未成約</h4>
+  <ul id="list_new"></ul>
+
+  <h4>見積書送付済み</h4>
+  <ul id="list_sent"></ul>
+
+  <h4>追撃中</h4>
+  <ul id="list_follow"></ul>
+
+  <h4>成約</h4>
+  <ul id="list_done"></ul>
 </div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.8">ドラム式</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.8">ダブルベッド</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.7">セミダブルベッド</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.5">シングルベッド</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="1.2">マットレス（W）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="1.0">マットレス（SW）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.8">マットレス（S）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.8">ソファ（2人）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="1.4">ソファ（3人）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="2.0">タンス大</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="1.0">タンス中</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.8">タンス小</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="2.4">食器棚（大）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="1.2">食器棚（中）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.6">食器棚（小）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.8">本棚（大）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.6">本棚（中）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.4">本棚（小）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.2">カラーボックス</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<hr>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.4">テレビ（40㌅~）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.25">テレビ（32㌅~）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.15">テレビ（24㌅~）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.2">テレビ台</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.15">デスク</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.1">椅子</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.15">ローテーブル</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.2">チェスト</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<hr>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.1">電子レンジ</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.1">炊飯器</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.15">掃除機</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.2">空気清浄機</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.2">ヒーター</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.15">扇風機</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<hr>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.3">エアコン</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.4">室外機</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="1.5">バイク</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="1.2">自転車（大）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="1.0">自転車（中）</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<div class="item">
-<label><input type="checkbox" data-m3="0.1">ダンボール</label>
-<button onclick="changeQty(this,-1)">-</button>
-<input type="number" value="1" min="1">
-<button onclick="changeQty(this,1)">+</button>
-</div>
-
-<p>合計立米：<span id="totalM3">0</span> ㎥</p>
-<input id="m3" type="hidden">
-
-</div>
-
-<!-- ===== ③：料金計算・プラン・相場・営業トーク（完全版） ===== -->
 
 <div class="card">
-<h3>料金計算</h3>
+  <h3>売上・利益管理</h3>
 
-<button onclick="calc()">見積もり計算</button>
+  <p>売上合計：¥<span id="totalSales">0</span></p>
 
-<div style="margin-top:10px; padding:10px; background:#f0f8ff; border-radius:10px;">
-  <h2 id="result_v3" style="color:#007bff;"></h2>
-  <p id="plan_v3"></p>
-  <p id="market_v3" class="small"></p>
+  <h4>経費入力</h4>
+  <button onclick="addExpense()">経費追加</button>
+  <div id="expenseList"></div>
+
+  <p>経費合計：¥<span id="totalExpense">0</span></p>
+  <p>利益：¥<span id="profit">0</span></p>
+  <p>成約率：<span id="rate">0</span>%</p>
 </div>
 
-<div style="margin-top:10px;">
-  <h4>料金内訳</h4>
-  <p id="detail_v3"></p>
-</div>
-
-<div style="margin-top:10px; background:#fff3cd; padding:10px; border-radius:10px;">
-  <h4>営業ポイント</h4>
-  <p id="talk_v3"></p>
-</div>
-
+<!-- 外部連携 -->
+<div class="card">
+  <h3>外部連携・保存</h3>
+  <button onclick="downloadPDF()">PDF保存</button>
+  <button onclick="sendToSheetFromUI()">スプレッドシート保存</button>
 </div>
 
 <script>
+let cases = [];
+let sales = 0;
+let expenses = [];
+const PRO_LOGO_THRESHOLD = 40000;
 
-// ===== 新calc（料金ロジック完全版）=====
+/* ---------------------------
+   共通
+--------------------------- */
+function formatYen(num){
+  return "¥" + Number(num || 0).toLocaleString();
+}
+
+function escapeHtml(str){
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function copyText(id){
+  let val = document.getElementById(id).value;
+  navigator.clipboard.writeText(val);
+  alert("コピーしました");
+}
+
+function openCalendly(){
+  window.open("https://calendly.com/alve-takahashi/30min");
+}
+
+function getAmountFromResultText(){
+  let priceText = document.getElementById("result_v3").innerText || "";
+  return Number(priceText.replace(/[^0-9]/g, "")) || 0;
+}
+
+function getEstimateData(){
+  let name = document.getElementById("name").value.trim();
+  let tel = document.getElementById("tel").value.trim();
+  let from = document.getElementById("from").value.trim();
+  let to = document.getElementById("to").value.trim();
+  let d1 = document.getElementById("date1").value.trim();
+  let d2 = document.getElementById("date2").value.trim();
+  let d3 = document.getElementById("date3").value.trim();
+  let discount = Number(document.getElementById("discount").value) || 0;
+  let busy = Number(document.getElementById("busy").value) || 0;
+  let price = getAmountFromResultText();
+
+  if(discount > 10000) discount = 10000;
+  if(discount < 0) discount = 0;
+
+  let finalPrice = price - discount;
+  if(finalPrice < 0) finalPrice = 0;
+
+  let today = new Date().toLocaleDateString();
+
+  return {
+    name, tel, from, to, d1, d2, d3,
+    discount, busy, price, finalPrice, today
+  };
+}
+
+function ensureCalculated(){
+  if(!document.getElementById("result_v3").innerText){
+    alert("先に見積もり計算をしてください");
+    return false;
+  }
+  return true;
+}
+
+/* ---------------------------
+   ロゴ
+--------------------------- */
+function getFriendlyLogoSVG(){
+  return `
+  <svg xmlns="http://www.w3.org/2000/svg" width="260" height="90" viewBox="0 0 260 90">
+    <rect width="260" height="90" fill="white"/>
+    <circle cx="38" cy="45" r="22" fill="#ff8a00"/>
+    <rect x="22" y="58" width="32" height="14" rx="6" fill="#1f9bb5"/>
+    <circle cx="32" cy="42" r="3" fill="#fff"/>
+    <circle cx="44" cy="42" r="3" fill="#fff"/>
+    <path d="M31 50 Q38 56 45 50" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <rect x="60" y="20" width="82" height="22" rx="5" fill="#ef5b0c"/>
+    <text x="101" y="36" font-size="18" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="bold">万事屋</text>
+    <rect x="60" y="48" width="118" height="24" rx="5" fill="#1f9bb5"/>
+    <text x="119" y="66" font-size="20" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="bold">そうちゃん</text>
+  </svg>`;
+}
+
+function getProLogoSVG(){
+  return `
+  <svg xmlns="http://www.w3.org/2000/svg" width="260" height="90" viewBox="0 0 260 90">
+    <rect width="260" height="90" fill="white"/>
+    <path d="M20 18 L55 8 L90 18 L90 48 Q90 67 55 84 Q20 67 20 48 Z" fill="#111"/>
+    <text x="55" y="52" font-size="28" text-anchor="middle" fill="#c89b2b" font-family="serif" font-weight="bold">YS</text>
+    <text x="120" y="40" font-size="28" fill="#111" font-family="sans-serif" font-weight="700">万事屋</text>
+    <text x="120" y="70" font-size="24" fill="#c89b2b" font-family="sans-serif" font-weight="700">そうちゃん</text>
+  </svg>`;
+}
+
+function getLogoSVGByPrice(price){
+  return price >= PRO_LOGO_THRESHOLD ? getProLogoSVG() : getFriendlyLogoSVG();
+}
+
+/* ---------------------------
+   立米
+--------------------------- */
+function updateM3(){
+  let total = 0;
+
+  document.querySelectorAll(".item").forEach(row => {
+    let check = row.querySelector("input[type='checkbox']");
+    let qty = row.querySelector("input[type='number']");
+
+    if(!check) return;
+
+    if(check.checked){
+      total += Number(check.dataset.m3) * (Number(qty.value) || 1);
+    }
+  });
+
+  document.getElementById("totalM3").innerText = total.toFixed(2);
+  document.getElementById("m3").value = total.toFixed(2);
+}
+
+function changeQty(btn, num){
+  let input = btn.parentElement.querySelector("input[type='number']");
+  let val = Number(input.value) + num;
+  if(val < 1) val = 1;
+  input.value = val;
+  updateM3();
+}
+
+/* ---------------------------
+   計算
+--------------------------- */
 window.calc = function(){
-
   let m3 = Number(document.getElementById("m3").value) || 0;
   let distance = Number(document.getElementById("distance").value) || 0;
   let stairs = Number(document.getElementById("stairs").value) || 0;
@@ -504,24 +715,16 @@ window.calc = function(){
   let highway = Number(document.getElementById("highway").value) || 0;
 
   let basePrice = 0;
-
   if(m3 <= 1) basePrice = 30000;
   else if(m3 <= 3) basePrice = 45000;
   else if(m3 <= 5) basePrice = 60000;
   else basePrice = 60000 + (m3 - 5) * 8000;
 
   let distanceFee = distance * 150;
-
-  let highwayFee = 0;
-  if(highway){
-    highwayFee = Math.min(distance * 30, 5000);
-  }
-
-  let smallAdjust = 0;
-  if(m3 <= 1) smallAdjust = 5000;
+  let highwayFee = highway ? Math.min(distance * 30, 5000) : 0;
+  let smallAdjust = m3 <= 1 ? 5000 : 0;
 
   let subtotal = basePrice + distanceFee + stairs + busy + highwayFee + smallAdjust;
-
   if(subtotal < 20000) subtotal = 20000;
 
   let warning = "";
@@ -532,158 +735,100 @@ window.calc = function(){
   let tax = Math.floor(subtotal * 0.1);
   let total = subtotal + tax;
 
-  // ★1000円切り上げ
+  // 1000円単位切り上げ
   total = Math.ceil(total / 1000) * 1000;
 
   let marketLow = 0;
   let marketHigh = 0;
-
   if(m3 <= 1){
     marketLow = 30000;
     marketHigh = 50000;
-  }
-  else if(m3 <= 3){
+  }else if(m3 <= 3){
     marketLow = 50000;
     marketHigh = 80000;
-  }
-  else if(m3 <= 5){
+  }else if(m3 <= 5){
     marketLow = 80000;
     marketHigh = 120000;
-  }
-  else{
+  }else{
     marketLow = 100000;
     marketHigh = 180000;
   }
 
-  // ★繁忙期相場反映
   if(busy > 0){
     marketLow += 20000;
     marketHigh += 30000;
   }
 
   let planName = "";
-
   if(m3 <= 1) planName = "小口特化プラン";
   else if(m3 <= 3) planName = "バランスプラン";
   else planName = "標準プラン";
 
   let talk = "今回の条件で最適な料金に調整しています。";
-
   if(total < marketLow){
     talk += " 相場よりかなり安い条件です。";
   }
-
   if(busy > 0){
     talk += " 繁忙期の相場と比較しても抑えています。";
   }
-
   if(distance > 30){
     talk += " 距離がありますが、かなり抑えています。";
   }
-
   talk += " 本日中のご決定でこの金額で確定可能です。";
 
   document.getElementById("result_v3").innerText =
-    "お支払い金額：¥" + total.toLocaleString() + "（税込・当日現金）";
+    "お支払い金額：" + formatYen(total) + "（税込・当日現金）";
 
   document.getElementById("plan_v3").innerText =
-    "適用プラン：" + planName + "（基本¥" + basePrice.toLocaleString() + "） " + warning;
+    "適用プラン：" + planName + "（基本" + formatYen(basePrice) + "） " + warning;
 
   document.getElementById("market_v3").innerText =
-    "相場（" + (busy > 0 ? "繁忙期" : "通常") + "）：¥" +
-    marketLow.toLocaleString() + "〜¥" + marketHigh.toLocaleString();
+    "相場（" + (busy > 0 ? "繁忙期" : "通常") + "）：" + formatYen(marketLow) + "〜" + formatYen(marketHigh);
 
   document.getElementById("detail_v3").innerText =
-    "内訳（税抜）：基本¥" + basePrice +
-    " ＋ 距離¥" + distanceFee +
-    " ＋ 階段¥" + stairs +
-    " ＋ 繁忙期¥" + busy +
-    " ＋ 高速¥" + highwayFee;
+    "内訳（税抜）：基本" + formatYen(basePrice) +
+    " ＋ 距離" + formatYen(distanceFee) +
+    " ＋ 階段" + formatYen(stairs) +
+    " ＋ 繁忙期" + formatYen(busy) +
+    " ＋ 高速" + formatYen(highwayFee);
 
   document.getElementById("talk_v3").innerText = talk;
 };
 
-</script>
-
-<!-- ===== ④：見積書・即決割引・カレンダリー・LINE ===== -->
-
-<div class="card">
-<h3>即決オファー</h3>
-
-<div style="background:#ffecec; padding:10px; border-radius:10px; margin-bottom:10px;">
-  <strong>🔥本日限定</strong><br>
-  今決めていただければ最大¥10,000割引可能です
-</div>
-
-<label>割引額（最大¥10,000）</label>
-<input id="discount" type="number" placeholder="例：5000">
-
-<button onclick="createEstimate()">営業LINE作成</button>
-<button onclick="createEstimatePDF()">見積書作成（PDF用）</button>
-
-<div style="margin-top:10px; background:#f9f9f9; padding:10px; border-radius:10px;">
-  <p id="estimate"></p>
-</div>
-
-<div style="margin-top:10px;">
-  <button onclick="sendLINE()">📩 LINEで送信（おすすめ）</button>
-  <button onclick="openCalendly()">📅 日程を確定する</button>
-</div>
-
-</div>
-
-<script>
-
-// ===== 営業LINE生成（攻め）=====
+/* ---------------------------
+   営業LINE
+--------------------------- */
 function createEstimate(){
+  if(!ensureCalculated()) return;
 
-  let name = document.getElementById("name").value;
-  let from = document.getElementById("from").value;
-  let to = document.getElementById("to").value;
-
-  let d1 = document.getElementById("date1").value;
-  let d2 = document.getElementById("date2").value;
-  let d3 = document.getElementById("date3").value;
-
-  let discount = Number(document.getElementById("discount").value) || 0;
-  if(discount > 10000) discount = 10000;
-  if(discount < 0) discount = 0;
-
-  let priceText = document.getElementById("result_v3").innerText;
-  let price = Number(priceText.replace(/[^0-9]/g, ""));
-
-  let finalPrice = price - discount;
-  if(finalPrice < 0) finalPrice = 0;
-
-  let busy = Number(document.getElementById("busy").value) || 0;
+  let data = getEstimateData();
 
   let salesText = "";
-
-  if(busy > 0){
+  if(data.busy > 0){
     salesText = "現在は繁忙期のため相場が高騰しておりますが、その中でもかなり抑えた料金でご案内しております。";
   }else{
     salesText = "通常相場と比較してもお得な料金でご案内しております。";
   }
 
   let text =
-`${name}様
+`${data.name || "お客様"}様
 
 この度はお問い合わせありがとうございます。
 お見積り内容をお送りいたします。
 
 【引越し内容】
-積み地：${from}
-降ろし地：${to}
+積み地：${data.from || "-"}
+降ろし地：${data.to || "-"}
 
 ご希望日：
-①${d1}
-②${d2}
-③${d3}
+①${data.d1 || "-"}
+②${data.d2 || "-"}
+③${data.d3 || "-"}
 
 ━━━━━━━━━━━━━━━
 
 💰お支払い金額
-¥${finalPrice.toLocaleString()}（税込・当日現金）
+${formatYen(data.finalPrice)}（税込・当日現金）
 
 ━━━━━━━━━━━━━━━
 
@@ -700,66 +845,51 @@ ${salesText}
   document.getElementById("estimate").innerText = text;
 }
 
-
-// ===== 見積書（PDF用・守り）=====
+/* ---------------------------
+   PDF用見積書テキスト
+--------------------------- */
 function createEstimatePDF(){
+  if(!ensureCalculated()) return;
 
-  let name = document.getElementById("name").value;
-  let tel = document.getElementById("tel").value;
-  let from = document.getElementById("from").value;
-  let to = document.getElementById("to").value;
-
-  let d1 = document.getElementById("date1").value;
-  let d2 = document.getElementById("date2").value;
-  let d3 = document.getElementById("date3").value;
-
-  let discount = Number(document.getElementById("discount").value) || 0;
-  if(discount > 10000) discount = 10000;
-  if(discount < 0) discount = 0;
-
-  let priceText = document.getElementById("result_v3").innerText;
-  let price = Number(priceText.replace(/[^0-9]/g, ""));
-
-  let finalPrice = price - discount;
-  if(finalPrice < 0) finalPrice = 0;
-
-  let today = new Date().toLocaleDateString();
+  let data = getEstimateData();
 
   let text =
 `【見積書】
 
 屋号：万事屋そうちゃん
 担当：髙橋 爽
-作成日：${today}
+作成日：${data.today}
 
 ■お客様情報
-名前：${name}
-TEL：${tel}
+名前：${data.name || "-"}
+TEL：${data.tel || "-"}
 
 ■引越し内容
-積み地：${from}
-降ろし地：${to}
+積み地：${data.from || "-"}
+降ろし地：${data.to || "-"}
 
 希望日：
-①${d1}
-②${d2}
-③${d3}
+①${data.d1 || "-"}
+②${data.d2 || "-"}
+③${data.d3 || "-"}
 
 ■料金
-通常料金：¥${price.toLocaleString()}
-即決割引：-¥${discount.toLocaleString()}
-お支払い金額：¥${finalPrice.toLocaleString()}（税込）
+通常料金：${formatYen(data.price)}
+即決割引：-${formatYen(data.discount)}
+お支払い金額：${formatYen(data.finalPrice)}（税込）
 
 ※当日現金でのお支払いとなります。
 ※高速代・駐車料金は別途発生する場合があります。
-※本日中のご決定で割引適用となります。`;
+※本日中のご決定で割引適用となります。
+※提示金額は当日確定金額となります。`;
 
   document.getElementById("estimate").innerText = text;
 }
 
-// LINE送信
+/* ---------------------------
+   LINE送信
+--------------------------- */
 function sendLINE(){
-
   let text = document.getElementById("estimate").innerText;
 
   if(!text){
@@ -771,84 +901,32 @@ function sendLINE(){
   window.open(url);
 }
 
-// カレンダリー
-function openCalendly(){
-  window.open("https://calendly.com/alve-takahashi/30min");
-}
-
-</script>
-
-<!-- ===== ⑤：案件管理・売上・利益・ステータス ===== -->
-
-<div class="card">
-<h3>案件管理</h3>
-
-<button onclick="saveCase()">未成約として保存</button>
-
-<h4>未成約</h4>
-<ul id="list_new"></ul>
-
-<h4>見積書送付済み</h4>
-<ul id="list_sent"></ul>
-
-<h4>追撃中</h4>
-<ul id="list_follow"></ul>
-
-<h4>成約</h4>
-<ul id="list_done"></ul>
-
-</div>
-
-<div class="card">
-<h3>売上・利益管理</h3>
-
-<p>売上合計：¥<span id="totalSales">0</span></p>
-
-<h4>経費入力</h4>
-<button onclick="addExpense()">経費追加</button>
-<div id="expenseList"></div>
-
-<p>経費合計：¥<span id="totalExpense">0</span></p>
-<p>利益：¥<span id="profit">0</span></p>
-
-<p>成約率：<span id="rate">0</span>%</p>
-
-</div>
-
-<script>
-
-let cases = [];
-let sales = 0;
-let expenses = [];
-
-// 案件保存
+/* ---------------------------
+   案件管理
+--------------------------- */
 function saveCase(){
-
   let text = document.getElementById("estimate").innerText;
 
   if(!text){
-    alert("見積書を作成してください");
+    alert("先に営業LINEまたは見積書を作成してください");
     return;
   }
 
   let id = Date.now();
+  let name = document.getElementById("name").value.trim();
 
-let name = document.getElementById("name").value;
+  let obj = {
+    id:id,
+    text:text,
+    name:name,
+    status:"new"
+  };
 
-let obj = {
-  id:id,
-  text:text,
-  name:name,
-  status:"new"
-};
-
-cases.push(obj);
-render();
+  cases.push(obj);
+  render();
 }
 
-// 描画
 function render(){
-
   document.getElementById("list_new").innerHTML = "";
   document.getElementById("list_sent").innerHTML = "";
   document.getElementById("list_follow").innerHTML = "";
@@ -858,15 +936,12 @@ function render(){
   let done = 0;
 
   cases.forEach(c => {
-
     if(c.status === "done") done++;
 
     let li = document.createElement("li");
     li.innerText = c.text;
 
-    // ボタン群
     if(c.status === "new"){
-
       let sendBtn = document.createElement("button");
       sendBtn.innerText = "見積送付";
       sendBtn.onclick = () => {
@@ -877,14 +952,11 @@ function render(){
       li.appendChild(sendBtn);
       document.getElementById("list_new").appendChild(li);
     }
-
     else if(c.status === "sent"){
-
       let followBtn = document.createElement("button");
       followBtn.innerText = "追撃";
       followBtn.onclick = () => {
-
-  let msg = `${c.name}様
+        let msg = `${c.name || "お客様"}様
 
 お世話になっております！
 先日お見積りをお送りさせていただいた件ですが、その後いかがでしょうか？
@@ -894,26 +966,17 @@ function render(){
 
 ご不明点などあればお気軽にご連絡ください！`;
 
-  let url = "https://line.me/R/msg/text/?" + encodeURIComponent(msg);
+        let url = "https://line.me/R/msg/text/?" + encodeURIComponent(msg);
+        window.open(url);
 
-  // 先に開く（重要）
-  window.open(url);
+        c.status = "follow";
+        render();
+      };
 
-  // ステータス変更
-  c.status = "follow";
-
-  render();
-};
-li.appendChild(followBtn);
-document.getElementById("list_sent").appendChild(li);
-}
-
+      li.appendChild(followBtn);
+      document.getElementById("list_sent").appendChild(li);
+    }
     else if(c.status === "follow"){
-
-    else if(c.status === "done"){
-document.getElementById("list_done").appendChild(li);
-}
-
       let doneBtn = document.createElement("button");
       doneBtn.innerText = "成約";
       doneBtn.onclick = () => {
@@ -923,63 +986,53 @@ document.getElementById("list_done").appendChild(li);
       };
 
       let delBtn = document.createElement("button");
-delBtn.innerText = "削除";
-
-delBtn.onclick = () => {
-  if(confirm(`${c.name} を削除する？`)){
-    cases = cases.filter(x => x.id !== c.id);
-    render();
-  }
-};
+      delBtn.innerText = "削除";
+      delBtn.onclick = () => {
+        if(confirm(`${c.name || "この案件"} を削除する？`)){
+          cases = cases.filter(x => x.id !== c.id);
+          render();
+        }
+      };
 
       li.appendChild(doneBtn);
       li.appendChild(delBtn);
-
       document.getElementById("list_follow").appendChild(li);
     }
-
+    else if(c.status === "done"){
+      document.getElementById("list_done").appendChild(li);
+    }
   });
 
-  // 成約率
   let rate = total ? Math.floor((done / total) * 100) : 0;
   document.getElementById("rate").innerText = rate;
 
   updateProfit();
 }
 
-// 売上追加
 function addSale(text){
-
-  let normalized = text.replace(/\r\n/g, "\n");
+  let normalized = String(text || "").replace(/\r\n/g, "\n");
   let lines = normalized.split("\n");
 
   let line = lines.find(l => l.includes("お支払い金額"));
-
   if(!line) return;
 
   let match = line.match(/¥([\d,]+)/);
-if(!match) return;
+  if(!match) return;
 
-let price = Number(match[1].replace(/,/g, ""));
+  let price = Number(match[1].replace(/,/g, ""));
   sales += price;
 
-  document.getElementById("totalSales").innerText =
-    sales.toLocaleString();
-}
-  function copyText(id){
-  let val = document.getElementById(id).value;
-  navigator.clipboard.writeText(val);
-  alert("コピーしました");
+  document.getElementById("totalSales").innerText = sales.toLocaleString();
 }
 
-// 経費追加
+/* ---------------------------
+   経費・利益
+--------------------------- */
 function addExpense(){
-
   let div = document.createElement("div");
 
   let input = document.createElement("input");
   input.placeholder = "金額";
-
   input.oninput = updateProfit;
 
   div.appendChild(input);
@@ -988,95 +1041,39 @@ function addExpense(){
   expenses.push(input);
 }
 
-// 利益計算
 function updateProfit(){
-
   let totalExpense = 0;
 
-  expenses.forEach(e=>{
+  expenses.forEach(e => {
     totalExpense += Number(e.value) || 0;
   });
 
-  document.getElementById("totalExpense").innerText = totalExpense;
+  document.getElementById("totalExpense").innerText = totalExpense.toLocaleString();
 
   let profit = sales - totalExpense;
-  document.getElementById("profit").innerText = profit;
+  document.getElementById("profit").innerText = profit.toLocaleString();
 }
 
-</script>
-
-<!-- ===== ⑥：PDF・スプレッドシート連携・最終仕上げ ===== -->
-
-<div class="card">
-<h3>外部連携・保存</h3>
-
-<button onclick="downloadPDF()">PDF保存</button>
-<button onclick="sendToSheetFromUI()">スプレッドシート保存</button>
-
-</div>
-
-<!-- jsPDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<script>
-
-// ===== PDF保存 =====
-function downloadPDF(){
-
-  createEstimatePDF();
-
-  let text = document.getElementById("estimate").innerText;
-  if(!text){
-    alert("先に見積書を作成してください");
-    return;
-  }
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  doc.setFontSize(18);
-  doc.text("見積書", 90, 15);
-
-  doc.setFontSize(10);
-  doc.text("万事屋そうちゃん", 10, 25);
-  doc.text("担当：髙橋 爽", 10, 30);
-
-  doc.setFontSize(12);
-
-  let lines = doc.splitTextToSize(text, 180);
-  doc.text(lines, 10, 50);
-
-  // 枠
-  doc.rect(5, 5, 200, 287);
-
-  doc.save("見積書.pdf");
-}
-
-// ===== スプレッドシート送信 =====
+/* ---------------------------
+   スプレッドシート
+--------------------------- */
 function sendToSheetFromUI(){
+  if(!ensureCalculated()) return;
 
-  let name = document.getElementById("name").value;
-  let tel = document.getElementById("tel").value;
-  let from = document.getElementById("from").value;
-  let to = document.getElementById("to").value;
+  let data = getEstimateData();
 
-  let priceText = document.getElementById("result_v3").innerText;
-  let price = Number(priceText.replace(/[^0-9]/g, ""));
-
-  let data = {
-    name:name,
-    tel:tel,
-    from:from,
-    to:to,
-    price:price
+  let payload = {
+    name: data.name,
+    tel: data.tel,
+    from: data.from,
+    to: data.to,
+    price: data.finalPrice
   };
 
-  sendToSheet(data);
+  sendToSheet(payload);
 }
 
-// ===== 実送信 =====
 function sendToSheet(data){
-
   fetch("https://script.google.com/macros/s/AKfycbyvgCDXeJFmMws52QxeNmx-VM8WkSKCyUYLsZQY_Lfei_6Y7AaL74HUuafcb9eli2V_/exec",{
     method:"POST",
     headers:{
@@ -1084,113 +1081,312 @@ function sendToSheet(data){
     },
     body: JSON.stringify(data)
   })
-  .then(res=>res.text())
-  .then(res=>{
+  .then(res => res.text())
+  .then(() => {
     alert("スプレッドシート保存完了");
   })
-  .catch(err=>{
+  .catch(() => {
     alert("送信失敗");
   });
-
 }
 
-// ===== バグ防止①：calc未実行対策 =====
+/* ---------------------------
+   PDF保存（文字化け回避・ロゴ自動切替・表形式）
+--------------------------- */
+function downloadPDF(){
+  if(!ensureCalculated()) return;
+
+  let data = getEstimateData();
+  let logoSvg = getLogoSVGByPrice(data.finalPrice);
+
+  let resultText = document.getElementById("result_v3").innerText || "";
+  let detailText = document.getElementById("detail_v3").innerText || "";
+
+  let detailMap = {
+    basic: 0,
+    distance: 0,
+    stairs: 0,
+    busy: 0,
+    highway: 0
+  };
+
+  let basic = detailText.match(/基本¥([\d,]+)/);
+  let distance = detailText.match(/距離¥([\d,]+)/);
+  let stairs = detailText.match(/階段¥([\d,]+)/);
+  let busy = detailText.match(/繁忙期¥([\d,]+)/);
+  let highway = detailText.match(/高速¥([\d,]+)/);
+
+  detailMap.basic = basic ? Number(basic[1].replace(/,/g,"")) : 0;
+  detailMap.distance = distance ? Number(distance[1].replace(/,/g,"")) : 0;
+  detailMap.stairs = stairs ? Number(stairs[1].replace(/,/g,"")) : 0;
+  detailMap.busy = busy ? Number(busy[1].replace(/,/g,"")) : 0;
+  detailMap.highway = highway ? Number(highway[1].replace(/,/g,"")) : 0;
+
+  let subtotal = detailMap.basic + detailMap.distance + detailMap.stairs + detailMap.busy + detailMap.highway;
+  let tax = data.price - subtotal;
+  if(tax < 0) tax = 0;
+
+  let win = window.open("", "_blank");
+  if(!win){
+    alert("ポップアップを許可してください");
+    return;
+  }
+
+  let html = `
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>見積書</title>
+<style>
+body{
+  margin:0;
+  padding:0;
+  background:#fff;
+  color:#111;
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
+}
+.page{
+  width:210mm;
+  min-height:297mm;
+  margin:0 auto;
+  padding:14mm;
+  box-sizing:border-box;
+  position:relative;
+}
+.border{
+  position:absolute;
+  top:8mm;
+  left:8mm;
+  right:8mm;
+  bottom:8mm;
+  border:1px solid #111;
+}
+.logo-wrap{
+  position:absolute;
+  top:16mm;
+  left:16mm;
+}
+.title{
+  text-align:center;
+  font-size:24px;
+  font-weight:700;
+  margin-top:10mm;
+  letter-spacing:2px;
+}
+.meta{
+  position:absolute;
+  top:18mm;
+  right:18mm;
+  text-align:right;
+  font-size:12px;
+  line-height:1.7;
+}
+.section{
+  margin-top:18px;
+}
+.label{
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+.box{
+  border:1px solid #bbb;
+  padding:10px;
+  border-radius:4px;
+  font-size:13px;
+  line-height:1.8;
+  white-space:pre-wrap;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:8px;
+  font-size:13px;
+}
+th,td{
+  border:1px solid #333;
+  padding:8px 10px;
+}
+th{
+  background:#f3f3f3;
+  text-align:left;
+}
+.money{
+  text-align:right;
+}
+.total-row td{
+  font-weight:700;
+  font-size:15px;
+}
+.total-strong{
+  font-weight:800;
+  font-size:18px;
+}
+.note{
+  margin-top:14px;
+  font-size:12px;
+  line-height:1.8;
+}
+.stamp-area{
+  margin-top:26px;
+  display:flex;
+  justify-content:flex-end;
+}
+.stamp-box{
+  width:120px;
+  height:90px;
+  border:1px solid #666;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  color:#666;
+}
+.main-content{
+  margin-top:55mm;
+}
+@media print{
+  body{ margin:0; }
+  .page{ margin:0; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="border"></div>
+
+  <div class="logo-wrap">${logoSvg}</div>
+
+  <div class="title">見積書</div>
+
+  <div class="meta">
+    屋号：万事屋そうちゃん<br>
+    担当：髙橋 爽<br>
+    作成日：${escapeHtml(data.today)}
+  </div>
+
+  <div class="main-content">
+    <div class="section">
+      <div class="label">■ お客様情報</div>
+      <div class="box">名前：${escapeHtml(data.name || "-")}
+TEL：${escapeHtml(data.tel || "-")}</div>
+    </div>
+
+    <div class="section">
+      <div class="label">■ 引越し内容</div>
+      <div class="box">積み地：${escapeHtml(data.from || "-")}
+降ろし地：${escapeHtml(data.to || "-")}
+
+希望日：
+①${escapeHtml(data.d1 || "-")}
+②${escapeHtml(data.d2 || "-")}
+③${escapeHtml(data.d3 || "-")}</div>
+    </div>
+
+    <div class="section">
+      <div class="label">■ 料金明細</div>
+      <table>
+        <tr>
+          <th style="width:70%;">項目</th>
+          <th style="width:30%;">金額</th>
+        </tr>
+        <tr>
+          <td>基本料金</td>
+          <td class="money">${formatYen(detailMap.basic)}</td>
+        </tr>
+        <tr>
+          <td>距離料金</td>
+          <td class="money">${formatYen(detailMap.distance)}</td>
+        </tr>
+        <tr>
+          <td>階段料金</td>
+          <td class="money">${formatYen(detailMap.stairs)}</td>
+        </tr>
+        <tr>
+          <td>繁忙期料金</td>
+          <td class="money">${formatYen(detailMap.busy)}</td>
+        </tr>
+        <tr>
+          <td>高速料金</td>
+          <td class="money">${formatYen(detailMap.highway)}</td>
+        </tr>
+        <tr>
+          <td>消費税等含む調整額</td>
+          <td class="money">${formatYen(tax)}</td>
+        </tr>
+        <tr>
+          <td>通常料金（税込）</td>
+          <td class="money"><strong>${formatYen(data.price)}</strong></td>
+        </tr>
+        <tr>
+          <td>即決割引</td>
+          <td class="money">-${formatYen(data.discount)}</td>
+        </tr>
+        <tr class="total-row">
+          <td>お支払い金額（税込）</td>
+          <td class="money total-strong">${formatYen(data.finalPrice)}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="note">
+      ※ 当日現金でのお支払いとなります。<br>
+      ※ 高速代・駐車料金は別途発生する場合があります。<br>
+      ※ 本日中のご決定で割引適用となります。<br>
+      ※ 提示金額は当日確定金額となります。
+    </div>
+
+    <div class="stamp-area">
+      <div class="stamp-box">押印欄</div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.onload = function(){
+  window.print();
+};
+<\/script>
+</body>
+</html>
+`;
+
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+}
+</script>
+
+<script>
+/* ---------------------------
+   バグ防止
+--------------------------- */
 (function(){
-
-  let btn = document.querySelector("button[onclick='createEstimate()']");
-  if(btn){
-    btn.addEventListener("click", function(){
-
-      if(!document.getElementById("result_v3").innerText){
-        alert("先に見積もり計算をしてください");
-        throw new Error("calc未実行");
-      }
-
+  let discount = document.getElementById("discount");
+  if(discount){
+    discount.addEventListener("input", function(){
+      if(this.value > 10000) this.value = 10000;
+      if(this.value < 0) this.value = 0;
     });
   }
 
-})();
-
-// ===== バグ防止②：割引暴走防止 =====
-(function(){
-
-  let input = document.getElementById("discount");
-
-  if(input){
-    input.addEventListener("input", function(){
-
-      if(this.value > 10000){
-        this.value = 10000;
-      }
-
-      if(this.value < 0){
-        this.value = 0;
-      }
-
+  let distance = document.getElementById("distance");
+  if(distance){
+    distance.addEventListener("input", function(){
+      if(this.value < 0) this.value = 0;
     });
   }
-
 })();
 
-// ===== バグ防止③：数値未入力対策 =====
-(function(){
-
-  let inputs = ["distance"];
-
-  inputs.forEach(id=>{
-    let el = document.getElementById(id);
-    if(el){
-      el.addEventListener("input", function(){
-        if(this.value < 0){
-          this.value = 0;
-        }
-      });
-    }
-  });
-
-})();
-
-function updateM3(){
-
-  let total = 0;
-
-  document.querySelectorAll(".item").forEach(row=>{
-
-    let check = row.querySelector("input[type='checkbox']");
-    let qty = row.querySelector("input[type='number']");
-
-    if(!check) return;
-    
-    if(check.checked){
-      total += Number(check.dataset.m3) * (Number(qty.value) || 1);
-    }
-
-  });
-
-  document.getElementById("totalM3").innerText = total.toFixed(2);
-  document.getElementById("m3").value = total.toFixed(2);
-}
-
-// ＋−ボタン
-function changeQty(btn, num){
-
-  let input = btn.parentElement.querySelector("input[type='number']");
-  let val = Number(input.value) + num;
-
-  if(val < 1) val = 1;
-
-  input.value = val;
-
-  updateM3();
-}
-
-// イベント
 window.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".item input").forEach(el=>{
+  document.querySelectorAll(".item input").forEach(el => {
     el.addEventListener("change", updateM3);
     el.addEventListener("input", updateM3);
   });
   updateM3();
 });
-
 </script>
+
+</body>
+</html>
