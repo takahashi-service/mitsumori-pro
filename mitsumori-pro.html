@@ -714,32 +714,55 @@ window.calc = function(){
   let busy = Number(document.getElementById("busy").value) || 0;
   let highway = Number(document.getElementById("highway").value) || 0;
 
+  // ---------------------------
+  // ベース価格
+  // 0〜1.00立米      → 20,000
+  // 1.01〜3.00立米   → 30,000
+  // 3.01〜5.00立米   → 40,000
+  // 5立米超え        → 追加5立米ごとに +20,000
+  // ---------------------------
   let basePrice = 0;
-  if(m3 <= 1) basePrice = 30000;
-  else if(m3 <= 3) basePrice = 40000;
-  else if(m3 <= 5) basePrice = 50000;
-  else basePrice = 60000 + (m3 - 5) * 8000;
 
-  let distanceFee = distance * 150;
-  let highwayFee = highway ? Math.min(distance * 30, 5000) : 0;
-  let smallAdjust = m3 <= 1 ? 5000 : 0;
-
-  let subtotal = basePrice + distanceFee + stairs + busy + highwayFee + smallAdjust;
-  if(subtotal < 20000) subtotal = 20000;
-
-  let warning = "";
-  if(subtotal < 25000){
-    warning = "⚠ 利益が薄い可能性あり";
+  if(m3 <= 1){
+    basePrice = 20000;
+  }else if(m3 <= 3){
+    basePrice = 30000;
+  }else if(m3 <= 5){
+    basePrice = 40000;
+  }else{
+    let extraTrips = Math.ceil((m3 - 5) / 5);
+    basePrice = 40000 + (extraTrips * 20000);
   }
 
+  // 距離加算（集客重視）
+  let distanceFee = distance * 100;
+
+  // 高速代
+  let highwayFee = highway ? Math.min(distance * 30, 5000) : 0;
+
+  // 小口加算は廃止
+  let subtotal = basePrice + distanceFee + stairs + busy + highwayFee;
+
+  // 税込み
   let tax = Math.floor(subtotal * 0.1);
   let total = subtotal + tax;
 
   // 1000円単位切り上げ
   total = Math.ceil(total / 1000) * 1000;
 
+  // 利益警告
+  let warning = "";
+  if(total < 25000 && busy === 0){
+    warning = "⚠ 利益が薄い可能性あり";
+  }
+
+  // ---------------------------
+  // 相場表示（前バージョン寄り）
+  // 即決率を落とさない表示に戻す
+  // ---------------------------
   let marketLow = 0;
   let marketHigh = 0;
+
   if(m3 <= 1){
     marketLow = 30000;
     marketHigh = 50000;
@@ -749,33 +772,54 @@ window.calc = function(){
   }else if(m3 <= 5){
     marketLow = 80000;
     marketHigh = 120000;
-  }else{
+  }else if(m3 <= 8){
     marketLow = 100000;
     marketHigh = 180000;
+  }else{
+    marketLow = 150000;
+    marketHigh = 250000;
   }
 
+  // 繁忙期相場反映
   if(busy > 0){
     marketLow += 20000;
     marketHigh += 30000;
   }
 
+  // プラン名
   let planName = "";
-  if(m3 <= 1) planName = "小口破格プラン";
-  else if(m3 <= 3) planName = "小口特価プラン";
-  else planName = "標準プラン";
+  if(m3 <= 1){
+    planName = "小口破格プラン";
+  }else if(m3 <= 3){
+    planName = "小口特価プラン";
+  }else if(m3 <= 5){
+    planName = "標準集客プラン";
+  }else{
+    planName = "ピストンプラン";
+  }
 
-  let talk = "今回の条件で最適な料金に調整しています。";
+  // 営業トーク
+  let talk = "今回の条件でかなり取りやすい価格帯に調整しています。";
+
   if(total < marketLow){
     talk += " 相場よりかなり安い条件です。";
   }
+
   if(busy > 0){
     talk += " 繁忙期の相場と比較しても抑えています。";
   }
-  if(distance > 30){
-    talk += " 距離がありますが、かなり抑えています。";
-  }
-  talk += " 本日中のご決定でこの金額で確定可能です。";
 
+  if(distance > 30){
+    talk += " 距離がありますが、集客重視で価格を調整しています。";
+  }
+
+  if(stairs > 0){
+    talk += " 階段作業込みでも良心的な価格設定です。";
+  }
+
+  talk += " 本日中のご決定でこの条件を適用可能です。";
+
+  // 表示
   document.getElementById("result_v3").innerText =
     "お支払い金額：" + formatYen(total) + "（税込・当日現金）";
 
@@ -783,7 +827,8 @@ window.calc = function(){
     "適用プラン：" + planName + "（基本" + formatYen(basePrice) + "） " + warning;
 
   document.getElementById("market_v3").innerText =
-    "相場（" + (busy > 0 ? "繁忙期" : "通常") + "）：" + formatYen(marketLow) + "〜" + formatYen(marketHigh);
+    "相場（" + (busy > 0 ? "繁忙期" : "通常") + "）：" +
+    formatYen(marketLow) + "〜" + formatYen(marketHigh);
 
   document.getElementById("detail_v3").innerText =
     "内訳（税抜）：基本" + formatYen(basePrice) +
